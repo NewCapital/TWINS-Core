@@ -1,0 +1,36 @@
+<!DOCTYPE RCC><RCC version="1.0">
+    <qresource prefix="/translations">
+        <file alias="bg">locale/twins_bg.qm</file>
+        <file alias="ca">locale/twins_ca.qm</file>
+        <file alias="cs">locale/twins_cs.qm</file>
+        <file alias="da">locale/twins_da.qm</file>
+        <file alias="de">locale/twins_de.qm</file>
+        <file alias="en">locale/twins_en.qm</file>
+        <file alias="en_US">locale/twins_en_US.qm</file>
+        <file alias="eo">locale/twins_eo.qm</file>
+        <file alias="es">locale/twins_es.qm</file>
+        <file alias="es_ES">locale/twins_es_ES.qm</file>
+        <file alias="fi">locale/twins_fi.qm</file>
+        <file alias="fr_FR">locale/twins_fr_FR.qm</file>
+        <file alias="hi_IN">locale/twins_hi_IN.qm</file>
+        <file alias="hr">locale/twins_hr.qm</file>
+        <file alias="hr_HR">locale/twins_hr_HR.qm</file>
+        <file alias="it">locale/twins_it.qm</file>
+        <file alias="ja">locale/twins_ja.qm</file>
+        <file alias="ko_KR">locale/twins_ko_KR.qm</file>
+        <file alias="lt_LT">locale/twins_lt_LT.qm</file>
+        <file alias="nl">locale/twins_nl.qm</file>
+        <file alias="pl">locale/twins_pl.qm</file>
+        <file alias="pt">locale/twins_pt.qm</file>
+        <file alias="pt_BR">locale/twins_pt_BR.qm</file>
+        <file alias="ro_RO">locale/twins_ro_RO.qm</file>
+        <file alias="ru">locale/twins_ru.qm</file>
+        <file alias="sk">locale/twins_sk.qm</file>
+        <file alias="sv">locale/twins_sv.qm</file>
+        <file alias="tr">locale/twins_tr.qm</file>
+        <file alias="uk">locale/twins_uk.qm</file>
+        <file alias="vi">locale/twins_vi.qm</file>
+        <file alias="zh_CN">locale/twins_zh_CN.qm</file>
+        <file alias="zh_TW">locale/twins_zh_TW.qm</file>
+    </qresource>
+</RCC>

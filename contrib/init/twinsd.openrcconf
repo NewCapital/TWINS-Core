@@ -1,0 +1,33 @@
+# /etc/conf.d/twinsd: config file for /etc/init.d/twinsd
+
+# Config file location
+#BITCOIND_CONFIGFILE="/etc/twins/twins.conf"
+
+# What directory to write pidfile to?  (created and owned by $BITCOIND_USER)
+#BITCOIND_PIDDIR="/var/run/twinsd"
+
+# What filename to give the pidfile
+#BITCOIND_PIDFILE="${BITCOIND_PIDDIR}/twinsd.pid"
+
+# Where to write twinsd data (be mindful that the blockchain is large)
+#BITCOIND_DATADIR="/var/lib/twinsd"
+
+# User and group to own twinsd process
+#BITCOIND_USER="twins"
+#BITCOIND_GROUP="twins"
+
+# Path to twinsd executable
+#BITCOIND_BIN="/usr/bin/twinsd"
+
+# Nice value to run twinsd under
+#BITCOIND_NICE=0
+
+# Additional options (avoid -conf and -datadir, use flags above)
+#BITCOIND_OPTS=""
+
+# The timeout in seconds OpenRC will wait for bitcoind to terminate
+# after a SIGTERM has been raised.
+# Note that this will be mapped as argument to start-stop-daemon's
+# '--retry' option, which means you can specify a retry schedule
+# here. For more information see man 8 start-stop-daemon.
+BITCOIND_SIGTERM_TIMEOUT=60

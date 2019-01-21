@@ -1,0 +1,28 @@
+Building TWINS
+
+Use the autogen script to prepare the build environment.
+
+    ./autogen.sh
+    ./configure
+    make
+
+Always verify the signatures and checksums.
+
+See doc/build-*.md for instructions on building twinsd,
+the intended-for-services, no-graphical-interface, reference
+implementation of TWINS.
+
+Building TWINS on Mac
+
+Pre-requirements :
+
+brew install autoconf automake berkeley-db4 libtool boost@1.57 miniupnpc openssl pkg-config protobuf qt5 zmq libevent librsvg
+
+./autogen.sh
+./configure LDFLAGS='-L/usr/local/opt/openssl/lib' CPPFLAGS='-I/usr/local/opt/openssl/include' PKG_CONFIG_PATH='/usr/local/opt/openssl/lib/pkgconfig' --with-gui=qt5
+make
+
+
+To create DMG file :
+
+make deploy 
