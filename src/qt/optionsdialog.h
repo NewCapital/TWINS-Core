@@ -33,6 +33,7 @@ public:
 
     void setModel(OptionsModel* model);
     void setMapper();
+    void setCurrentIndex(int index);
 
 protected:
     bool eventFilter(QObject* object, QEvent* event);

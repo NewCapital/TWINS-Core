@@ -10,6 +10,7 @@
 #include "main.h"
 #include "txdb.h"
 #include "walletdb.h"
+#include "ztwinswallet.h"
 #include "accumulators.h"
 
 using namespace std;
@@ -277,8 +278,9 @@ bool CzTWINSTracker::UpdateState(const CMintMeta& meta)
     return true;
 }
 
-void CzTWINSTracker::Add(const CDeterministicMint& dMint, bool isNew, bool isArchived)
+void CzTWINSTracker::Add(const CDeterministicMint& dMint, bool isNew, bool isArchived, CzTWINSWallet* zTWINSWallet)
 {
+    bool iszTWINSWalletInitialized = (NULL != zTWINSWallet);
     CMintMeta meta;
     meta.hashPubcoin = dMint.GetPubcoinHash();
     meta.nHeight = dMint.GetHeight();
@@ -290,6 +292,11 @@ void CzTWINSTracker::Add(const CDeterministicMint& dMint, bool isNew, bool isArc
     meta.denom = dMint.GetDenomination();
     meta.isArchived = isArchived;
     meta.isDeterministic = true;
+    if (! iszTWINSWalletInitialized)
+        zTWINSWallet = new CzTWINSWallet(strWalletFile);
+    meta.isSeedCorrect = zTWINSWallet->CheckSeed(dMint);
+    if (! iszTWINSWalletInitialized)
+        delete zTWINSWallet;
     mapSerialHashes[meta.hashSerial] = meta;
 
     if (isNew)
@@ -310,6 +317,7 @@ void CzTWINSTracker::Add(const CZerocoinMint& mint, bool isNew, bool isArchived)
     meta.denom = mint.GetDenomination();
     meta.isArchived = isArchived;
     meta.isDeterministic = false;
+    meta.isSeedCorrect = true;
     mapSerialHashes[meta.hashSerial] = meta;
 
     if (isNew)
@@ -429,7 +437,7 @@ bool CzTWINSTracker::UpdateStatusInternal(const std::set<uint256>& setMempool, C
     return false;
 }
 
-std::set<CMintMeta> CzTWINSTracker::ListMints(bool fUnusedOnly, bool fMatureOnly, bool fUpdateStatus)
+std::set<CMintMeta> CzTWINSTracker::ListMints(bool fUnusedOnly, bool fMatureOnly, bool fUpdateStatus, bool fWrongSeed)
 {
     CWalletDB walletdb(strWalletFile);
     if (fUpdateStatus) {
@@ -439,8 +447,12 @@ std::set<CMintMeta> CzTWINSTracker::ListMints(bool fUnusedOnly, bool fMatureOnly
         LogPrint("zero", "%s: added %d zerocoinmints from DB\n", __func__, listMintsDB.size());
 
         std::list<CDeterministicMint> listDeterministicDB = walletdb.ListDeterministicMints();
-        for (auto& dMint : listDeterministicDB)
-            Add(dMint);
+
+        CzTWINSWallet* zTWINSWallet = new CzTWINSWallet(strWalletFile);
+        for (auto& dMint : listDeterministicDB) {
+            Add(dMint, false, false, zTWINSWallet);
+        }
+        delete zTWINSWallet;
         LogPrint("zero", "%s: added %d dztwins from DB\n", __func__, listDeterministicDB.size());
     }
 
@@ -479,6 +491,10 @@ std::set<CMintMeta> CzTWINSTracker::ListMints(bool fUnusedOnly, bool fMatureOnly
             if (mint.nHeight >= mapMaturity.at(mint.denom))
                 continue;
         }
+
+        if (!fWrongSeed && !mint.isSeedCorrect)
+            continue;
+
         setMints.insert(mint);
     }
 
