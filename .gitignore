@@ -74,12 +74,15 @@ src/qt/test/moc*.cpp
 *.trs
 *.dmg
 
-*.json.h
 *.raw.h
 
 #libtool object files
 *.lo
 *.la
+
+# Depends dir
+#!depends/Makefile
+#!depends/patches/*/*.patch
 
 # Compilation and Qt preprocessor part
 *.qm
