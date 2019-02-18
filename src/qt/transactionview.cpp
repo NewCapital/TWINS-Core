@@ -18,6 +18,7 @@
 #include "transactiontablemodel.h"
 #include "walletmodel.h"
 
+
 #include "ui_interface.h"
 
 #include <QComboBox>
@@ -42,7 +43,7 @@ TransactionView::TransactionView(QWidget* parent) : QWidget(parent), model(0), t
 {
     QSettings settings;
     // Build filter row
-    setContentsMargins(0, 0, 0, 0);
+    setContentsMargins(5, 0, 5, 0);
 
     QHBoxLayout* hlayout = new QHBoxLayout();
     hlayout->setContentsMargins(0, 0, 0, 0);
@@ -59,6 +60,7 @@ TransactionView::TransactionView(QWidget* parent) : QWidget(parent), model(0), t
     watchOnlyWidget->addItem("", TransactionFilterProxy::WatchOnlyFilter_All);
     watchOnlyWidget->addItem(QIcon(":/icons/eye_plus"), "", TransactionFilterProxy::WatchOnlyFilter_Yes);
     watchOnlyWidget->addItem(QIcon(":/icons/eye_minus"), "", TransactionFilterProxy::WatchOnlyFilter_No);
+    GUIUtil::setStyle(watchOnlyWidget);
     hlayout->addWidget(watchOnlyWidget);
 
     dateWidget = new QComboBox(this);
@@ -74,6 +76,7 @@ TransactionView::TransactionView(QWidget* parent) : QWidget(parent), model(0), t
     dateWidget->addItem(tr("Last month"), LastMonth);
     dateWidget->addItem(tr("This year"), ThisYear);
     dateWidget->addItem(tr("Range..."), Range);
+    GUIUtil::setStyle(dateWidget);
     dateWidget->setCurrentIndex(settings.value("transactionDate").toInt());
     hlayout->addWidget(dateWidget);
 
@@ -84,6 +87,7 @@ TransactionView::TransactionView(QWidget* parent) : QWidget(parent), model(0), t
     typeWidget->setFixedWidth(TYPE_COLUMN_WIDTH);
 #endif
 
+    GUIUtil::setStyle(typeWidget);
     typeWidget->addItem(tr("All"), TransactionFilterProxy::ALL_TYPES);
     typeWidget->addItem(tr("Most Common"), TransactionFilterProxy::COMMON_TYPES);
     typeWidget->addItem(tr("Received with"), TransactionFilterProxy::TYPE(TransactionRecord::RecvWithAddress) | TransactionFilterProxy::TYPE(TransactionRecord::RecvFromOther));
@@ -146,7 +150,7 @@ TransactionView::TransactionView(QWidget* parent) : QWidget(parent), model(0), t
     view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     view->setTabKeyNavigation(false);
     view->setContextMenuPolicy(Qt::CustomContextMenu);
-
+    GUIUtil::setStyle(view);
     view->installEventFilter(this);
 
     transactionView = view;

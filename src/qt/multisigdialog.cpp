@@ -44,6 +44,30 @@ MultisigDialog::MultisigDialog(QWidget* parent) : QDialog(parent, Qt::WindowSyst
     ui->setupUi(this);
     multisigTx = CMutableTransaction();
 
+    //set stylesheet
+    GUIUtil::setStyleSheet(this);
+
+    //set elements style
+    GUIUtil::setStyle(ui->signButton);
+    GUIUtil::setStyle(ui->commitButton);
+    GUIUtil::setStyle(ui->addPrivKeyButton);
+    GUIUtil::setStyle(ui->pushButtonCoinControl);
+    GUIUtil::setStyle(ui->addDestinationButton);
+    GUIUtil::setStyle(ui->addInputButton);
+    GUIUtil::setStyle(ui->createButton);
+    GUIUtil::setStyle(ui->addAddressButton);
+    GUIUtil::setStyle(ui->addMultisigButton);
+    GUIUtil::setStyle(ui->importAddressButton);
+    GUIUtil::setStyle(ui->transactionHex);
+    GUIUtil::setStyle(ui->signButtonStatus);
+    GUIUtil::setStyle(ui->multisigAddressLabel);
+    GUIUtil::setStyle(ui->addMultisigStatus);
+    GUIUtil::setStyle(ui->importRedeem);
+    GUIUtil::setStyle(ui->createButtonStatus);
+
+    //set table style
+    GUIUtil::setStyle(ui->multisigTabWidget);
+
     //flag to show keyScrollArea on first priv key added
     isFirstPrivKey = true;
     isFirstRawTx = true;
@@ -56,8 +80,6 @@ MultisigDialog::MultisigDialog(QWidget* parent) : QDialog(parent, Qt::WindowSyst
     on_addAddressButton_clicked();
     on_addAddressButton_clicked();
     on_addDestinationButton_clicked();
-
-    this->setStyleSheet(GUIUtil::loadStyleSheet());
 }
 
 MultisigDialog::~MultisigDialog()

@@ -21,6 +21,7 @@ WalletFrame::WalletFrame(BitcoinGUI* _gui) : QFrame(_gui),
     QHBoxLayout* walletFrameLayout = new QHBoxLayout(this);
     setContentsMargins(0, 0, 0, 0);
     walletStack = new QStackedWidget(this);
+    walletStack->setObjectName(QStringLiteral("MainStackPanel"));
     walletFrameLayout->setContentsMargins(0, 0, 0, 0);
     walletFrameLayout->addWidget(walletStack);
 

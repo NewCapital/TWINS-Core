@@ -22,6 +22,9 @@ EditAddressDialog::EditAddressDialog(Mode mode, QWidget* parent) : QDialog(paren
 {
     ui->setupUi(this);
 
+    //set btn style
+    GUIUtil::setStyle(ui->buttonBox);
+
     GUIUtil::setupAddressWidget(ui->addressEdit, this);
 
     switch (mode) {

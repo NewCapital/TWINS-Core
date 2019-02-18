@@ -45,7 +45,7 @@ WalletView::WalletView(QWidget* parent) : QStackedWidget(parent),
     overviewPage = new OverviewPage();
     explorerWindow = new BlockExplorer(this);
     transactionsPage = new QWidget(this);
-    transactionsPage->setStyleSheet("background-color: rgb(56, 56, 56); color: rgb(211, 215, 207)");
+
     // Create Header with the same names as the other forms to be CSS-Id compatible
     QFrame *frame_Header = new QFrame(transactionsPage);
     frame_Header->setObjectName(QStringLiteral("frame_Header"));
@@ -60,6 +60,7 @@ WalletView::WalletView(QWidget* parent) : QStackedWidget(parent),
     labelOverviewHeaderLeft->setObjectName(QStringLiteral("labelOverviewHeaderLeft"));
     labelOverviewHeaderLeft->setMinimumSize(QSize(464, 60));
     labelOverviewHeaderLeft->setMaximumSize(QSize(16777215, 60));
+    labelOverviewHeaderLeft->setMargin(5);
     labelOverviewHeaderLeft->setText(tr("HISTORY"));
     QFont fontHeaderLeft;
     fontHeaderLeft.setPointSize(20);
@@ -92,10 +93,11 @@ WalletView::WalletView(QWidget* parent) : QStackedWidget(parent),
 
 
     transactionView = new TransactionView(this);
-    transactionView->setStyleSheet("background-color: rgb(56, 56, 56); color: rgb(211, 215, 207)");
     vbox->addWidget(transactionView);
+
     QPushButton* exportButton = new QPushButton(tr("&Export"), this);
     exportButton->setToolTip(tr("Export the data in the current tab to a file"));
+    GUIUtil::setStyle(exportButton);
 #ifndef Q_OS_MAC // Icons on push buttons are very uncommon on Mac
     exportButton->setIcon(QIcon(":/icons/export"));
 #endif
@@ -250,7 +252,6 @@ void WalletView::gotoHistoryPage()
 {
     setCurrentWidget(transactionsPage);
 }
-
 
 void WalletView::gotoBlockExplorerPage()
 {

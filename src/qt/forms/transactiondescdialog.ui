@@ -13,19 +13,11 @@
   <property name="windowTitle">
    <string>Transaction details</string>
   </property>
-  <property name="styleSheet">
-   <string notr="true">background-color:rgb(56, 56, 56);
-color:rgb(211, 215, 207);</string>
-  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QTextEdit" name="detailText">
      <property name="toolTip">
       <string>This pane shows a detailed description of the transaction</string>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">background-color:rgb(70, 81, 86);
-color:rgb(211, 215, 207);</string>
      </property>
      <property name="readOnly">
       <bool>true</bool>

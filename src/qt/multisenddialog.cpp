@@ -11,6 +11,7 @@
 #include "base58.h"
 #include "init.h"
 #include "walletmodel.h"
+#include "guiutil.h"
 
 #include <QStyle>
 
@@ -19,6 +20,18 @@ MultiSendDialog::MultiSendDialog(QWidget* parent) : QDialog(parent, Qt::WindowSy
                                                     model(nullptr)
 {
     ui->setupUi(this);
+
+    //set stylesheet
+    GUIUtil::setStyleSheet(this);
+
+    //set btn style
+    GUIUtil::setStyle(ui->viewButton);
+    GUIUtil::setStyle(ui->addButton);
+    GUIUtil::setStyle(ui->deleteButton);
+    GUIUtil::setStyle(ui->activateButton);
+    GUIUtil::setStyle(ui->disableButton);
+    GUIUtil::setStyle(ui->addressBookButton);
+
     updateCheckBoxes();
 }
 

@@ -421,6 +421,8 @@ void BitcoinApplication::requestShutdown()
 void BitcoinApplication::initializeResult(int retval)
 {
     qDebug() << __func__ << ": Initialization result: " << retval;
+
+    LogPrintf("init application\n");
     // Set exit result: 0 if successful, 1 if failure
     returnValue = retval ? 0 : 1;
     if (retval) {

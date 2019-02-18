@@ -18,10 +18,6 @@
   <property name="windowTitle">
    <string notr="true">TWINS Core - Command-line options</string>
   </property>
-  <property name="styleSheet">
-   <string notr="true">background-color:rgb(56, 56, 56);
-color:rgb(211, 215, 207);</string>
-  </property>
   <layout class="QHBoxLayout" name="horizontalLayout_2">
    <item>
     <widget class="QLabel" name="graphic">
@@ -31,12 +27,8 @@ color:rgb(211, 215, 207);</string>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="styleSheet">
-      <string notr="true">background-color:rgb(56, 56, 56);
-color:rgb(211, 215, 207);</string>
-     </property>
      <property name="pixmap">
-      <pixmap resource="../twins.qrc">:/images/about</pixmap>
+      <pixmap>:/images/about</pixmap>
      </property>
     </widget>
    </item>
@@ -44,10 +36,6 @@ color:rgb(211, 215, 207);</string>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
       <widget class="QTextEdit" name="helpMessage">
-       <property name="styleSheet">
-        <string notr="true">background-color:rgb(70, 81, 86);
-color:rgb(211, 215, 207);</string>
-       </property>
        <property name="readOnly">
         <bool>true</bool>
        </property>
@@ -66,8 +54,8 @@ color:rgb(211, 215, 207);</string>
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>70</width>
-          <height>212</height>
+          <width>464</width>
+          <height>200</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -75,10 +63,6 @@ color:rgb(211, 215, 207);</string>
           <widget class="QLabel" name="aboutMessage">
            <property name="cursor">
             <cursorShape>IBeamCursor</cursorShape>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">background-color:rgb(70, 81, 86);
-color:rgb(211, 215, 207);</string>
            </property>
            <property name="textFormat">
             <enum>Qt::PlainText</enum>

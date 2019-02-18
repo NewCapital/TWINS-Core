@@ -10,15 +10,11 @@
     <x>0</x>
     <y>0</y>
     <width>594</width>
-    <height>529</height>
+    <height>558</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MultiSend</string>
-  </property>
-  <property name="styleSheet">
-   <string notr="true">background-color:rgb(56, 56, 56);
-color:rgb(211, 215, 207);</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout" stretch="0">
    <property name="leftMargin">
@@ -116,10 +112,6 @@ MultiSend will not be activated unless you have clicked Activate</string>
            <property name="toolTip">
             <string>Enter whole numbers 1 - 100</string>
            </property>
-           <property name="styleSheet">
-            <string notr="true">background-color:rgb(70, 81, 86);
-color:rgb(211, 215, 207);</string>
-           </property>
            <property name="placeholderText">
             <string>Enter % to Give (1-100)</string>
            </property>
@@ -149,10 +141,6 @@ color:rgb(211, 215, 207);</string>
           <widget class="QLineEdit" name="multiSendAddressEdit">
            <property name="toolTip">
             <string/>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">background-color:rgb(70, 81, 86);
-color:rgb(211, 215, 207);</string>
            </property>
            <property name="placeholderText">
             <string>Enter Address to Send to</string>
@@ -203,10 +191,6 @@ color:rgb(211, 215, 207);</string>
        </item>
        <item>
         <widget class="QLineEdit" name="labelAddressLabelEdit">
-         <property name="styleSheet">
-          <string notr="true">background-color:rgb(70, 81, 86);
-color:rgb(211, 215, 207);</string>
-         </property>
          <property name="placeholderText">
           <string>Enter a label for this address to add it to your address book</string>
          </property>

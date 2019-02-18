@@ -13,10 +13,6 @@
   <property name="windowTitle">
    <string>Welcome</string>
   </property>
-  <property name="styleSheet">
-   <string notr="true">background-color:rgb(56, 56, 56);
-color:rgb(211, 215, 207);</string>
-  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QLabel" name="label_2">
@@ -113,12 +109,7 @@ color:rgb(211, 215, 207);</string>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
-          <widget class="QLineEdit" name="dataDirectory">
-           <property name="styleSheet">
-            <string notr="true">background-color:rgb(70, 81, 86);
-color:rgb(211, 215, 207);</string>
-           </property>
-          </widget>
+          <widget class="QLineEdit" name="dataDirectory"/>
          </item>
          <item>
           <widget class="QPushButton" name="ellipsisButton">

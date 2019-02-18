@@ -27,7 +27,6 @@ AskPassphraseDialog::AskPassphraseDialog(Mode mode, QWidget* parent, WalletModel
                                                                                                             fCapsLock(false)
 {
     ui->setupUi(this);
-    this->setStyleSheet(GUIUtil::loadStyleSheet());
 
     ui->passEdit1->setMinimumSize(ui->passEdit1->sizeHint());
     ui->passEdit2->setMinimumSize(ui->passEdit2->sizeHint());

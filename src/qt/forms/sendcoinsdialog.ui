@@ -10,15 +10,14 @@
     <x>0</x>
     <y>0</y>
     <width>978</width>
-    <height>715</height>
+    <height>734</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Send Coins</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color:rgb(56, 56, 56);
-color:rgb(211, 215, 207);</string>
+   <string notr="true"/>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout" stretch="0">
    <property name="bottomMargin">
@@ -87,6 +86,9 @@ color:rgb(211, 215, 207);</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+            </property>
+            <property name="margin">
+             <number>5</number>
             </property>
            </widget>
           </item>
@@ -759,10 +761,6 @@ color:rgb(211, 215, 207);</string>
                     <height>0</height>
                    </size>
                   </property>
-                  <property name="styleSheet">
-                   <string notr="true">background-color:rgb(70, 81, 86);
-color:rgb(211, 215, 207);</string>
-                  </property>
                  </widget>
                 </item>
                 <item>
@@ -905,8 +903,8 @@ color:rgb(211, 215, 207);</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>944</width>
-             <height>73</height>
+             <width>938</width>
+             <height>69</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,1">
@@ -1383,12 +1381,7 @@ color:rgb(211, 215, 207);</string>
                        </widget>
                       </item>
                       <item>
-                       <widget class="BitcoinAmountField" name="customFee">
-                        <property name="styleSheet">
-                         <string notr="true">background-color:rgb(70, 81, 86);
-color:rgb(211, 215, 207);</string>
-                        </property>
-                       </widget>
+                       <widget class="BitcoinAmountField" name="customFee"/>
                       </item>
                       <item>
                        <spacer name="horizontalSpacer_6">
@@ -1652,14 +1645,11 @@ color:rgb(211, 215, 207);</string>
               <string>S&amp;end</string>
              </property>
              <property name="icon">
-              <iconset resource="../twins.qrc">
+              <iconset>
                <normaloff>:/icons/send</normaloff>:/icons/send</iconset>
              </property>
              <property name="autoDefault">
               <bool>false</bool>
-             </property>
-             <property name="default">
-              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -1678,7 +1668,7 @@ color:rgb(211, 215, 207);</string>
               <string>Clear &amp;All</string>
              </property>
              <property name="icon">
-              <iconset resource="../twins.qrc">
+              <iconset>
                <normaloff>:/icons/remove</normaloff>:/icons/remove</iconset>
              </property>
              <property name="autoDefault">
@@ -1695,7 +1685,7 @@ color:rgb(211, 215, 207);</string>
               <string>Add &amp;Recipient</string>
              </property>
              <property name="icon">
-              <iconset resource="../twins.qrc">
+              <iconset>
                <normaloff>:/icons/add</normaloff>:/icons/add</iconset>
              </property>
              <property name="autoDefault">
@@ -1771,15 +1761,15 @@ color:rgb(211, 215, 207);</string>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>QValidatedLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>qvalidatedlineedit.h</header>
-  </customwidget>
-  <customwidget>
    <class>BitcoinAmountField</class>
    <extends>QLineEdit</extends>
    <header>bitcoinamountfield.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QValidatedLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>qvalidatedlineedit.h</header>
   </customwidget>
  </customwidgets>
  <resources>

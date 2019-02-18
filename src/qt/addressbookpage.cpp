@@ -38,6 +38,16 @@ AddressBookPage::AddressBookPage(Mode mode, Tabs tab, QWidget* parent) : QDialog
     ui->exportButton->setIcon(QIcon());
 #endif
 
+    //set button style
+    GUIUtil::setStyle(ui->newAddress);
+    GUIUtil::setStyle(ui->copyAddress);
+    GUIUtil::setStyle(ui->deleteAddress);
+    GUIUtil::setStyle(ui->exportButton);
+    GUIUtil::setStyle(ui->closeButton);
+
+    //set table style
+    GUIUtil::setStyle(ui->tableView);
+
     switch (mode) {
     case ForSelection:
         switch (tab) {
@@ -51,6 +61,7 @@ AddressBookPage::AddressBookPage(Mode mode, Tabs tab, QWidget* parent) : QDialog
         connect(ui->tableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(accept()));
         ui->tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
         ui->tableView->setFocus();
+        ui->tableView->setAlternatingRowColors(false);
         ui->closeButton->setText(tr("C&hoose"));
         ui->exportButton->hide();
         break;

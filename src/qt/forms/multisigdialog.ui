@@ -19,10 +19,6 @@
   <property name="windowTitle">
    <string>Multisignature Address Interactions</string>
   </property>
-  <property name="styleSheet">
-   <string notr="true">background-color:rgb(56, 56, 56);
-color:rgb(211, 215, 207);</string>
-  </property>
   <layout class="QVBoxLayout" name="verticalLayout_8">
    <item>
     <widget class="QTabWidget" name="multisigTabWidget">
@@ -86,12 +82,7 @@ color:rgb(211, 215, 207);</string>
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="multisigAddressLabel">
-           <property name="styleSheet">
-            <string notr="true">background-color:rgb(70, 81, 86);
-color:rgb(211, 215, 207);</string>
-           </property>
-          </widget>
+          <widget class="QLineEdit" name="multisigAddressLabel"/>
          </item>
         </layout>
        </item>
@@ -106,7 +97,7 @@ color:rgb(211, 215, 207);</string>
             <string>&amp;Add Address / Key</string>
            </property>
            <property name="icon">
-            <iconset resource="../twins.qrc">
+            <iconset>
              <normaloff>:/icons/add</normaloff>:/icons/add</iconset>
            </property>
            <property name="autoDefault">
@@ -159,7 +150,7 @@ color:rgb(211, 215, 207);</string>
             <x>0</x>
             <y>0</y>
             <width>759</width>
-            <height>164</height>
+            <height>174</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -203,7 +194,7 @@ color:rgb(211, 215, 207);</string>
             <string>C&amp;reate</string>
            </property>
            <property name="icon">
-            <iconset resource="../twins.qrc">
+            <iconset>
              <normaloff>:/icons/filesave</normaloff>:/icons/filesave</iconset>
            </property>
            <property name="autoDefault">
@@ -231,10 +222,6 @@ color:rgb(211, 215, 207);</string>
              <width>16777215</width>
              <height>75</height>
             </size>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">background-color:rgb(70, 81, 86);
-color:rgb(211, 215, 207);</string>
            </property>
            <property name="readOnly">
             <bool>true</bool>
@@ -281,7 +268,7 @@ Please be patient after clicking import.</string>
             <string>&amp;Import Redeem</string>
            </property>
            <property name="icon">
-            <iconset resource="../twins.qrc">
+            <iconset>
              <normaloff>:/icons/receiving_addresses</normaloff>:/icons/receiving_addresses</iconset>
            </property>
           </widget>
@@ -293,10 +280,6 @@ Please be patient after clicking import.</string>
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">background-color:rgb(98, 104, 118);
-color:rgb(211, 215, 207);</string>
            </property>
           </widget>
          </item>
@@ -391,7 +374,7 @@ color:rgb(211, 215, 207);</string>
                 <string>Add a Raw Input</string>
                </property>
                <property name="icon">
-                <iconset resource="../twins.qrc">
+                <iconset>
                  <normaloff>:/css/default</normaloff>:/css/default</iconset>
                </property>
               </widget>
@@ -415,7 +398,7 @@ color:rgb(211, 215, 207);</string>
                 <x>0</x>
                 <y>0</y>
                 <width>747</width>
-                <height>132</height>
+                <height>137</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -463,7 +446,7 @@ color:rgb(211, 215, 207);</string>
                 <string>Add &amp;Destination</string>
                </property>
                <property name="icon">
-                <iconset resource="../twins.qrc">
+                <iconset>
                  <normaloff>:/icons/add</normaloff>:/icons/add</iconset>
                </property>
               </widget>
@@ -500,7 +483,7 @@ color:rgb(211, 215, 207);</string>
                 <x>0</x>
                 <y>0</y>
                 <width>747</width>
-                <height>132</height>
+                <height>136</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_11">
@@ -547,7 +530,7 @@ color:rgb(211, 215, 207);</string>
                 <string>Cr&amp;eate</string>
                </property>
                <property name="icon">
-                <iconset resource="../twins.qrc">
+                <iconset>
                  <normaloff>:/icons/export</normaloff>:/icons/export</iconset>
                </property>
                <property name="autoDefault">
@@ -587,10 +570,6 @@ color:rgb(211, 215, 207);</string>
                  <width>16777215</width>
                  <height>16777215</height>
                 </size>
-               </property>
-               <property name="styleSheet">
-                <string notr="true">background-color:rgb(70, 81, 86);
-color:rgb(211, 215, 207);</string>
                </property>
                <property name="sizeAdjustPolicy">
                 <enum>QAbstractScrollArea::AdjustToContents</enum>
@@ -641,10 +620,6 @@ txScrollArea:{
            <property name="toolTip">
             <string/>
            </property>
-           <property name="styleSheet">
-            <string notr="true">background-color:rgb(70, 81, 86);
-color:rgb(211, 215, 207);</string>
-           </property>
           </widget>
          </item>
         </layout>
@@ -676,7 +651,7 @@ color:rgb(211, 215, 207);</string>
                 <string>S&amp;ign</string>
                </property>
                <property name="icon">
-                <iconset resource="../twins.qrc">
+                <iconset>
                  <normaloff>:/icons/edit</normaloff>:/icons/edit</iconset>
                </property>
                <property name="autoDefault">
@@ -708,7 +683,7 @@ color:rgb(211, 215, 207);</string>
                 <string>Co&amp;mmit</string>
                </property>
                <property name="icon">
-                <iconset resource="../twins.qrc">
+                <iconset>
                  <normaloff>:/icons/send</normaloff>:/icons/send</iconset>
                </property>
                <property name="autoDefault">
@@ -733,7 +708,7 @@ color:rgb(211, 215, 207);</string>
                   <string>Add Private &amp;Key</string>
                  </property>
                  <property name="icon">
-                  <iconset resource="../twins.qrc">
+                  <iconset>
                    <normaloff>:/icons/add</normaloff>:/icons/add</iconset>
                  </property>
                 </widget>
@@ -772,10 +747,6 @@ color:rgb(211, 215, 207);</string>
                  <height>16777215</height>
                 </size>
                </property>
-               <property name="styleSheet">
-                <string notr="true">background-color:rgb(70, 81, 86);
-color:rgb(211, 215, 207);</string>
-               </property>
                <property name="verticalScrollBarPolicy">
                 <enum>Qt::ScrollBarAsNeeded</enum>
                </property>
@@ -809,7 +780,7 @@ color:rgb(211, 215, 207);</string>
                 <x>0</x>
                 <y>0</y>
                 <width>755</width>
-                <height>166</height>
+                <height>174</height>
                </rect>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -843,8 +814,6 @@ color:rgb(211, 215, 207);</string>
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="../twins.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

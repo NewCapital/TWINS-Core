@@ -7,21 +7,17 @@
     <x>0</x>
     <y>0</y>
     <width>769</width>
-    <height>517</height>
+    <height>589</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Tools window</string>
   </property>
-  <property name="styleSheet">
-   <string notr="true">background-color:rgb(56, 56, 56);
-color:rgb(211, 215, 207);</string>
-  </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>4</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab_info">
       <attribute name="title">
@@ -912,7 +908,7 @@ color:rgb(211, 215, 207);</string>
                       <blue>56</blue>
                      </color>
                     </brush>
-                   </colorrole>
+                  </colorrole>
                   </inactive>
                   <disabled>
                    <colorrole role="WindowText">
@@ -1040,10 +1036,6 @@ color:rgb(211, 215, 207);</string>
          </property>
          <item>
           <widget class="QTableView" name="peerWidget">
-           <property name="styleSheet">
-            <string notr="true">background-color:rgb(70, 81, 86);
-color:rgb(211, 215, 207);</string>
-           </property>
            <property name="horizontalScrollBarPolicy">
             <enum>Qt::ScrollBarAsNeeded</enum>
            </property>
@@ -1104,10 +1096,6 @@ color:rgb(211, 215, 207);</string>
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">background-color:rgb(70, 81, 86);
-color:rgb(211, 215, 207);</string>
            </property>
            <property name="horizontalScrollBarPolicy">
             <enum>Qt::ScrollBarAsNeeded</enum>

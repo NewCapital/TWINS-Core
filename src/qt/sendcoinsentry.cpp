@@ -35,6 +35,14 @@ SendCoinsEntry::SendCoinsEntry(QWidget* parent) : QStackedWidget(parent),
     // just a label for displaying twins address(es)
     ui->payTo_is->setFont(GUIUtil::bitcoinAddressFont());
 
+    //set btn style
+    GUIUtil::setStyle(ui->addressBookButton);
+    GUIUtil::setStyle(ui->pasteButton);
+    GUIUtil::setStyle(ui->deleteButton);
+
+    //set editfield style
+    GUIUtil::setStyle(ui->payAmount);
+
     // Connect signals
     connect(ui->payAmount, SIGNAL(valueChanged()), this, SIGNAL(payAmountChanged()));
     connect(ui->deleteButton, SIGNAL(clicked()), this, SLOT(deleteClicked()));

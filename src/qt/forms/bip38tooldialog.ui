@@ -13,10 +13,6 @@
   <property name="windowTitle">
    <string>BIP 38 Tool</string>
   </property>
-  <property name="styleSheet">
-   <string notr="true">background-color:rgb(56, 56, 56);
-color:rgb(211, 215, 207);</string>
-  </property>
   <property name="modal">
    <bool>true</bool>
   </property>
@@ -24,7 +20,7 @@ color:rgb(211, 215, 207);</string>
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tabBip38Encrypt">
       <attribute name="title">
@@ -66,10 +62,6 @@ color:rgb(211, 215, 207);</string>
           <widget class="QValidatedLineEdit" name="addressIn_ENC">
            <property name="toolTip">
             <string>The TWINS address to encrypt</string>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">background-color:rgb(70, 81, 86);
-color:rgb(211, 215, 207);</string>
            </property>
           </widget>
          </item>
@@ -129,10 +121,6 @@ color:rgb(211, 215, 207);</string>
          </item>
          <item>
           <widget class="QLineEdit" name="passphraseIn_ENC">
-           <property name="styleSheet">
-            <string notr="true">background-color:rgb(70, 81, 86);
-color:rgb(211, 215, 207);</string>
-           </property>
            <property name="echoMode">
             <enum>QLineEdit::Password</enum>
            </property>
@@ -167,10 +155,6 @@ color:rgb(211, 215, 207);</string>
             <font>
              <italic>true</italic>
             </font>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">background-color:rgb(70, 81, 86);
-color:rgb(211, 215, 207);</string>
            </property>
            <property name="readOnly">
             <bool>true</bool>
@@ -316,10 +300,6 @@ color:rgb(211, 215, 207);</string>
            <property name="toolTip">
             <string>The encrypted private key</string>
            </property>
-           <property name="styleSheet">
-            <string notr="true">background-color:rgb(70, 81, 86);
-color:rgb(211, 215, 207);</string>
-           </property>
           </widget>
          </item>
          <item>
@@ -361,10 +341,6 @@ color:rgb(211, 215, 207);</string>
          </item>
          <item>
           <widget class="QLineEdit" name="passphraseIn_DEC">
-           <property name="styleSheet">
-            <string notr="true">background-color:rgb(70, 81, 86);
-color:rgb(211, 215, 207);</string>
-           </property>
            <property name="echoMode">
             <enum>QLineEdit::Password</enum>
            </property>
@@ -462,12 +438,7 @@ color:rgb(211, 215, 207);</string>
           </widget>
          </item>
          <item>
-          <widget class="QValidatedLineEdit" name="decryptedKeyOut_DEC">
-           <property name="styleSheet">
-            <string notr="true">background-color:rgb(70, 81, 86);
-color:rgb(211, 215, 207);</string>
-           </property>
-          </widget>
+          <widget class="QValidatedLineEdit" name="decryptedKeyOut_DEC"/>
          </item>
         </layout>
        </item>
@@ -488,12 +459,7 @@ color:rgb(211, 215, 207);</string>
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="addressOut_DEC">
-           <property name="styleSheet">
-            <string notr="true">background-color:rgb(70, 81, 86);
-color:rgb(211, 215, 207);</string>
-           </property>
-          </widget>
+          <widget class="QLineEdit" name="addressOut_DEC"/>
          </item>
         </layout>
        </item>

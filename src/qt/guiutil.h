@@ -8,6 +8,7 @@
 #define BITCOIN_QT_GUIUTIL_H
 
 #include "amount.h"
+#include "bitcoinamountfield.h"
 
 #include <QEvent>
 #include <QHeaderView>
@@ -17,6 +18,17 @@
 #include <QString>
 #include <QTableView>
 #include <QTableWidget>
+#include <QAbstractButton>
+#include <QComboBox>
+#include <QDialogButtonBox>
+#include <QTableView>
+#include <QTabWidget>
+#include <QDialog>
+#include <QScrollArea>
+#include <QLineEdit>
+#include <QPlainTextEdit>
+#include <QTextEdit>
+#include <QMainWindow>
 
 #include <boost/filesystem.hpp>
 
@@ -207,6 +219,23 @@ void restoreWindowGeometry(const QString& strSetting, const QSize& defaultSizeIn
 
 /** Load global CSS theme */
 QString loadStyleSheet();
+
+/** Load default CSS theme */
+QString loadDefaultStyleSheet();
+
+void setStyle(QAbstractButton* button);
+void setStyle(QComboBox* combobox);
+void setStyle(BitcoinAmountField* line);
+void setStyle(QDialogButtonBox* button);
+void setStyle(QTableView* table);
+void setStyle(QTabWidget* tabControl);
+void setStyle(QScrollArea* scrolArea);
+void setStyle(QPlainTextEdit* area);
+void setStyle(QTextEdit* area);
+void setStyle(QLineEdit* area);
+
+void setStyleSheet(QDialog* dialog);
+void setStyleSheet(QMainWindow* window);
 
 /** Check whether a theme is not build-in */
 bool isExternal(QString theme);

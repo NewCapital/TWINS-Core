@@ -13,10 +13,6 @@
   <property name="windowTitle">
    <string>Edit Address</string>
   </property>
-  <property name="styleSheet">
-   <string notr="true">background-color:rgb(56, 56, 56);
-color:rgb(211, 215, 207);</string>
-  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QFormLayout" name="formLayout">
@@ -38,10 +34,6 @@ color:rgb(211, 215, 207);</string>
        <property name="toolTip">
         <string>The label associated with this address list entry</string>
        </property>
-       <property name="styleSheet">
-        <string notr="true">background-color:rgb(70, 81, 86);
-color:rgb(211, 215, 207);</string>
-       </property>
       </widget>
      </item>
      <item row="1" column="0">
@@ -58,10 +50,6 @@ color:rgb(211, 215, 207);</string>
       <widget class="QValidatedLineEdit" name="addressEdit">
        <property name="toolTip">
         <string>The address associated with this address list entry. This can only be modified for sending addresses.</string>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">background-color:rgb(70, 81, 86);
-color:rgb(211, 215, 207);</string>
        </property>
       </widget>
      </item>

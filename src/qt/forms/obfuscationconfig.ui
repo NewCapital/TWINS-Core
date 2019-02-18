@@ -13,10 +13,6 @@
   <property name="windowTitle">
    <string>Configure Obfuscation</string>
   </property>
-  <property name="styleSheet">
-   <string notr="true">background-color:rgb(56, 56, 56);
-color:rgb(211, 215, 207);</string>
-  </property>
   <widget class="QPushButton" name="buttonBasic">
    <property name="geometry">
     <rect>

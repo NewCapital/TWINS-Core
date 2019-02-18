@@ -40,6 +40,15 @@ MasternodeList::MasternodeList(QWidget* parent) : QWidget(parent),
     int columnActiveWidth = 130;
     int columnLastSeenWidth = 130;
 
+    //set btn style
+    GUIUtil::setStyle(ui->startButton);
+    GUIUtil::setStyle(ui->startAllButton);
+    GUIUtil::setStyle(ui->startMissingButton);
+    GUIUtil::setStyle(ui->UpdateButton);
+
+    //set table style
+    GUIUtil::setStyle(ui->tableWidgetMyMasternodes);
+
     ui->tableWidgetMyMasternodes->setAlternatingRowColors(false);
     ui->tableWidgetMyMasternodes->setColumnWidth(0, columnAliasWidth);
     ui->tableWidgetMyMasternodes->setColumnWidth(1, columnAddressWidth);

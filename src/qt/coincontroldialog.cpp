@@ -55,7 +55,12 @@ CoinControlDialog::CoinControlDialog(QWidget* parent, bool fMultisigEnabled) : Q
     this->fMultisigEnabled = fMultisigEnabled;
 
     /* Open CSS when configured */
-    this->setStyleSheet(GUIUtil::loadStyleSheet());
+    GUIUtil::setStyleSheet(this);
+
+    //set btn style
+    GUIUtil::setStyle(ui->pushButtonSelectAll);
+    GUIUtil::setStyle(ui->pushButtonToggleLock);
+    GUIUtil::setStyle(ui->buttonBox);
 
     // context menu actions
     QAction* copyAddressAction = new QAction(tr("Copy address"), this);

@@ -7,15 +7,11 @@
     <x>0</x>
     <y>0</y>
     <width>564</width>
-    <height>111</height>
+    <height>131</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Open URI</string>
-  </property>
-  <property name="styleSheet">
-   <string notr="true">background-color:rgb(56, 56, 56);
-color:rgb(211, 215, 207);</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -35,12 +31,7 @@ color:rgb(211, 215, 207);</string>
       </widget>
      </item>
      <item>
-      <widget class="QValidatedLineEdit" name="uriEdit">
-       <property name="styleSheet">
-        <string notr="true">background-color:rgb(70, 81, 86);
-color:rgb(211, 215, 207);</string>
-       </property>
-      </widget>
+      <widget class="QValidatedLineEdit" name="uriEdit"/>
      </item>
      <item>
       <widget class="QPushButton" name="selectFileButton">

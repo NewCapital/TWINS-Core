@@ -10,24 +10,10 @@
     <height>841</height>
    </rect>
   </property>
-  <property name="minimumSize">
-   <size>
-    <width>960</width>
-    <height>682</height>
-   </size>
-  </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <property name="styleSheet">
-   <string notr="true">background-color:rgb(56, 56, 56);
-color:rgb(211, 215, 207);
-font: &quot;Vemana2000&quot;;</string>
-  </property>
-  <layout class="QVBoxLayout" name="topLayout" stretch="1">
-   <property name="rightMargin">
-    <number>9</number>
-   </property>
+  <layout class="QVBoxLayout" name="topLayout" stretch="0">
    <item>
     <widget class="QFrame" name="frame_BG">
      <property name="minimumSize">
@@ -42,13 +28,7 @@ font: &quot;Vemana2000&quot;;</string>
        <height>16777215</height>
       </size>
      </property>
-     <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_3" stretch="1">
+     <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0">
       <property name="leftMargin">
        <number>0</number>
       </property>
@@ -63,16 +43,7 @@ font: &quot;Vemana2000&quot;;</string>
       </property>
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_Master" stretch="0,1">
-        <property name="leftMargin">
-         <number>0</number>
-        </property>
-        <property name="topMargin">
-         <number>0</number>
-        </property>
-        <property name="rightMargin">
-         <number>0</number>
-        </property>
-        <property name="bottomMargin">
+        <property name="spacing">
          <number>0</number>
         </property>
         <item>
@@ -97,18 +68,18 @@ font: &quot;Vemana2000&quot;;</string>
              </property>
              <item>
               <widget class="QLabel" name="labelOverviewHeaderLeft">
-                <property name="minimumSize">
-                 <size>
-                  <width>464</width>
-                  <height>60</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>16777215</width>
-                  <height>60</height>
-                 </size>
-                </property>
+               <property name="minimumSize">
+                <size>
+                 <width>464</width>
+                 <height>60</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>60</height>
+                </size>
+               </property>
                <property name="font">
                 <font>
                  <pointsize>20</pointsize>
@@ -121,6 +92,9 @@ font: &quot;Vemana2000&quot;;</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+               </property>
+               <property name="margin">
+                <number>5</number>
                </property>
               </widget>
              </item>
@@ -176,13 +150,13 @@ font: &quot;Vemana2000&quot;;</string>
             <number>6</number>
            </property>
            <property name="topMargin">
-            <number>0</number>
+            <number>5</number>
            </property>
            <property name="rightMargin">
             <number>6</number>
            </property>
            <property name="bottomMargin">
-            <number>0</number>
+            <number>5</number>
            </property>
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_Content" stretch="1,1">
@@ -225,12 +199,6 @@ font: &quot;Vemana2000&quot;;</string>
                       <width>470</width>
                       <height>0</height>
                      </size>
-                    </property>
-                    <property name="frameShape">
-                     <enum>QFrame::StyledPanel</enum>
-                    </property>
-                    <property name="frameShadow">
-                     <enum>QFrame::Raised</enum>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_5">
                      <item>
@@ -415,12 +383,6 @@ font: &quot;Vemana2000&quot;;</string>
                   </item>
                   <item>
                    <widget class="QFrame" name="frame_Balances">
-                    <property name="frameShape">
-                     <enum>QFrame::StyledPanel</enum>
-                    </property>
-                    <property name="frameShadow">
-                     <enum>QFrame::Raised</enum>
-                    </property>
                     <layout class="QVBoxLayout" name="verticalLayout_4">
                      <item>
                       <layout class="QHBoxLayout" name="horizontalLayout_4">
@@ -844,12 +806,6 @@ font: &quot;Vemana2000&quot;;</string>
                   </item>
                   <item>
                    <widget class="QFrame" name="frame_ZerocoinBalances">
-                    <property name="frameShape">
-                     <enum>QFrame::StyledPanel</enum>
-                    </property>
-                    <property name="frameShadow">
-                     <enum>QFrame::Raised</enum>
-                    </property>
                     <layout class="QVBoxLayout" name="verticalLayout_7">
                      <item>
                       <widget class="Line" name="line_ZerocoinBalance">
@@ -894,7 +850,7 @@ font: &quot;Vemana2000&quot;;</string>
                  <property name="frameShadow">
                   <enum>QFrame::Raised</enum>
                  </property>
-                 <layout class="QVBoxLayout" name="verticalLayout_1" stretch="0,0,0,0,0">
+                 <layout class="QVBoxLayout" name="verticalLayout_1">
                   <item>
                    <layout class="QHBoxLayout" name="horizontalLayout_2">
                     <item>

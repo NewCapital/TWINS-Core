@@ -33,6 +33,25 @@ SignVerifyMessageDialog::SignVerifyMessageDialog(QWidget* parent) : QDialog(pare
     GUIUtil::setupAddressWidget(ui->addressIn_SM, this);
     GUIUtil::setupAddressWidget(ui->addressIn_VM, this);
 
+    //set elements style
+    GUIUtil::setStyle(ui->verifyMessageButton_VM);
+    GUIUtil::setStyle(ui->clearButton_VM);
+    GUIUtil::setStyle(ui->addressBookButton_VM);
+    GUIUtil::setStyle(ui->signMessageButton_SM);
+    GUIUtil::setStyle(ui->clearButton_SM);
+    GUIUtil::setStyle(ui->copySignatureButton_SM);
+    GUIUtil::setStyle(ui->addressBookButton_SM);
+    GUIUtil::setStyle(ui->pasteButton_SM);
+    GUIUtil::setStyle(ui->addressIn_VM);
+    GUIUtil::setStyle(ui->messageIn_VM);
+    GUIUtil::setStyle(ui->signatureIn_VM);
+    GUIUtil::setStyle(ui->addressIn_SM);
+    GUIUtil::setStyle(ui->messageIn_SM);
+    GUIUtil::setStyle(ui->signatureOut_SM);
+
+    //set tabcontrol style
+    GUIUtil::setStyle(ui->tabWidget);
+
     ui->addressIn_SM->installEventFilter(this);
     ui->messageIn_SM->installEventFilter(this);
     ui->signatureOut_SM->installEventFilter(this);

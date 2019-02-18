@@ -132,6 +132,13 @@ private:
     QAction* showHelpMessageAction;
     QAction* multiSendAction;
 
+    //Note Toolbar items
+    /*QMacToolBarItem* overviewToolBarItem;
+    QMacToolBarItem* receiveToolBarItem;
+    QMacToolBarItem* sendToolBarItem;
+    QMacToolBarItem* historyToolBarItem;
+    QMacToolBarItem* masternodesToolBarItem;*/
+
     QSystemTrayIcon* trayIcon;
     QMenu* trayIconMenu;
     Notificator* notificator;
@@ -148,6 +155,8 @@ private:
     void createMenuBar();
     /** Create the toolbars */
     void createToolBars();
+    /** Create Mac toolbars */
+   // void createMacToolBars();
     /** Create system tray icon and notification */
     void createTrayIcon(const NetworkStyle* networkStyle);
     /** Create system tray menu (or setup the dock menu) */
