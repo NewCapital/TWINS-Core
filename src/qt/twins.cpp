@@ -10,7 +10,6 @@
 #endif
 
 #include "bitcoingui.h"
-
 #include "clientmodel.h"
 #include "guiconstants.h"
 #include "guiutil.h"
@@ -191,6 +190,8 @@ public:
     void createWindow(const NetworkStyle* networkStyle);
     /// Create splash screen
     void createSplashScreen(const NetworkStyle* networkStyle);
+    //Set stylesheet
+    void setStyleSheet();
 
     /// Request core initialization
     void requestInitialize();
@@ -345,6 +346,12 @@ void BitcoinApplication::createPaymentServer()
 void BitcoinApplication::createOptionsModel()
 {
     optionsModel = new OptionsModel();
+}
+
+void BitcoinApplication::setStyleSheet()
+{
+    //assign stylesheet
+    GUIUtil::setStyleSheet(this);
 }
 
 void BitcoinApplication::createWindow(const NetworkStyle* networkStyle)
@@ -627,6 +634,7 @@ int main(int argc, char* argv[])
     uiInterface.InitMessage.connect(InitMessage);
 
     if (GetBoolArg("-splash", true) && !GetBoolArg("-min", false))
+        app.setStyleSheet();
         app.createSplashScreen(networkStyle.data());
 
     try {

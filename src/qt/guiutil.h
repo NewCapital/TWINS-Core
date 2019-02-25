@@ -29,6 +29,7 @@
 #include <QPlainTextEdit>
 #include <QTextEdit>
 #include <QMainWindow>
+#include <QApplication>
 
 #include <boost/filesystem.hpp>
 
@@ -223,17 +224,10 @@ QString loadStyleSheet();
 /** Load default CSS theme */
 QString loadDefaultStyleSheet();
 
-void setStyle(QAbstractButton* button);
-void setStyle(QComboBox* combobox);
-void setStyle(BitcoinAmountField* line);
-void setStyle(QDialogButtonBox* button);
-void setStyle(QTableView* table);
-void setStyle(QTabWidget* tabControl);
-void setStyle(QScrollArea* scrolArea);
-void setStyle(QPlainTextEdit* area);
-void setStyle(QTextEdit* area);
-void setStyle(QLineEdit* area);
+/** Load dark CSS theme */
+QString loadDarkStyleSheet();
 
+void setStyleSheet(QApplication* app);
 void setStyleSheet(QDialog* dialog);
 void setStyleSheet(QMainWindow* window);
 

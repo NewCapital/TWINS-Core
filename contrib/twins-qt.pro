@@ -641,7 +641,6 @@ SOURCES += src/activemasternode.cpp \
            src/leveldb/helpers/memenv/memenv_test.cc \
            src/secp256k1/src/java/org_bitcoin_NativeSecp256k1.c
 RESOURCES += src/qt/twins.qrc src/qt/twins_locale.qrc
-
 TRANSLATIONS += src/qt/locale/twins_bg.ts \
                 src/qt/locale/twins_de.ts \
                 src/qt/locale/twins_en.ts \

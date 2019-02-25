@@ -71,6 +71,8 @@
 #include <QPlainTextEdit>
 #include <QTextEdit>
 #include <QMainWindow>
+#include <QTextStream>
+#include <QApplication>
 
 
 #if BOOST_FILESYSTEM_VERSION >= 3
@@ -870,72 +872,38 @@ QString loadDefaultStyleSheet()
     return styleSheet;
 }
 
-void setStyle(QAbstractButton* button){
-    #if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
-    button->setStyleSheet("background-color:rgb(29, 32, 35); color:rgb(211, 215, 207);");
-    #endif
+// Open default CSS
+QString loadDarkStyleSheet()
+{
+    QString styleSheet;
+    QSettings settings;
+    QString cssName;
+
+    // Build-in CSS
+    settings.setValue("fCSSexternal", false);
+    settings.setValue("theme", "dark");
+
+    QFile f(":qdarkstyle/dark");
+    if (!f.exists())
+        printf("Unable to set stylesheet, file not found\n");
+
+    f.open(QFile::ReadOnly | QFile::Text);
+    QTextStream ts(&f);
+    styleSheet = ts.readAll();
+
+    return styleSheet;
 }
 
-void setStyle(QComboBox* combobox){
-    #if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
-    combobox->setStyleSheet("background-color:rgb(70, 81, 86); color:rgb(211, 215, 207);");
-    #endif
-}
+void setStyleSheet(QApplication* app)
+{
+    //Note: global stylesheet
+    QString style = GUIUtil::loadDarkStyleSheet();
 
-void setStyle(BitcoinAmountField* line){
-    #if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
-    line->setStyleSheet("background-color:rgb(70, 81, 86); color:rgb(211, 215, 207);");
-    #endif
-}
-
-void setStyle(QDialogButtonBox* button){
-    #if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
-     button->setStyleSheet("background-color:rgb(29, 32, 35); color:rgb(211, 215, 207);");
-     #endif
-}
-
-void setStyle(QTableView* table){
-     #if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
-     table->setStyleSheet("background-color:rgb(70, 81, 86); color:rgb(211, 215, 207);");
-     #endif
-
-     #if defined(Q_OS_WIN)
-     table->horizontalHeader()->setStyleSheet("QHeaderView::section { background-color:rgb(70, 81, 86); color:rgb(211, 215, 207); }");
-     #endif
-}
-
-void setStyle(QTabWidget* tabControl){
-     #if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
-     tabControl->setStyleSheet("background-color:rgb(56, 56, 56); color:rgb(211, 215, 207); border: 1px solid rgb(70, 81, 86);");
-     #endif
-
-     #if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
-     tabControl->setStyleSheet("QTabBar::tab { background-color:rgb(70, 81, 86); color:rgb(211, 215, 207); }");
-     #endif
-}
-
-void setStyle(QScrollArea* scrolArea){
-    #if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
-    scrolArea->setStyleSheet("background: transparent; border: 1;");
-    #endif
-}
-
-void setStyle(QPlainTextEdit* area){
-   #if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
-    area->setStyleSheet(" background-color:rgb(70, 81, 86); color:rgb(211, 215, 207);");
-    #endif
-}
-
-void setStyle(QTextEdit* area){
-    #if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
-    area->setStyleSheet(" background-color:rgb(70, 81, 86); color:rgb(211, 215, 207);");
-    #endif
-}
-
-void setStyle(QLineEdit* area){
-    #if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
-    area->setStyleSheet(" background-color:rgb(70, 81, 86); color:rgb(211, 215, 207); border-width: 0px;");
-    #endif
+    //assign stylesheet
+    if(style != NULL)
+       app->setStyleSheet(style);
+    else
+       LogPrint("gui", "Unable to load styleSheet file");
 }
 
 void setStyleSheet(QMainWindow* window){
@@ -947,9 +915,17 @@ void setStyleSheet(QMainWindow* window){
     //assign stylesheet
     if(style != NULL)
        window->setStyleSheet(style);
-    else{
-        LogPrint("gui", "Unable to load styleSheet file");
-    }
+    else
+       LogPrint("gui", "Unable to load styleSheet file");
+#else
+    //Note: global stylesheet
+    QString style = GUIUtil::loadDarkStyleSheet();
+
+    //assign stylesheet
+    if(style != NULL)
+       window->setStyleSheet(style);
+    else
+       LogPrint("gui", "Unable to load styleSheet file");
 #endif
 }
 
@@ -962,9 +938,18 @@ void setStyleSheet(QDialog* dialog){
     //assign stylesheet
     if(style != NULL)
        dialog->setStyleSheet(style);
-    else{
-        LogPrint("gui", "Unable to load styleSheet file");
-    }
+    else
+       LogPrint("gui", "Unable to load styleSheet file");
+
+#else
+    //Note: global stylesheet
+    QString style = GUIUtil::loadDarkStyleSheet();
+
+    //assign stylesheet
+    if(style != NULL)
+       dialog->setStyleSheet(style);
+    else
+       LogPrint("gui", "Unable to load styleSheet file");
 #endif
 }
 

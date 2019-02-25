@@ -107,22 +107,6 @@ BitcoinGUI::BitcoinGUI(const NetworkStyle* networkStyle, QWidget* parent) : QMai
                                                                             prevBlocks(0),
                                                                             spinnerFrame(0)
 {
-    /* Open CSS when configured */
-#if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
-    //Note: global stylesheet
-    QString style = GUIUtil::loadStyleSheet();
-
-    //Note: default stylesheet
-    //QString style = GUIUtil::loadDefaultStyleSheet();
-
-    //assign stylesheet
-    if(style != NULL)
-       this->setStyleSheet(style);
-    else{
-        LogPrint("gui", "Unable to load styleSheet file");
-    }
-#endif
-
     GUIUtil::restoreWindowGeometry("nWindow", QSize(600, 400), this);
 
     QString windowTitle = tr("TWINS Core") + " - ";
@@ -173,13 +157,8 @@ BitcoinGUI::BitcoinGUI(const NetworkStyle* networkStyle, QWidget* parent) : QMai
     // Create application menu bar
     createMenuBar();
 
-//#ifndef Q_OS_MAC
-    // Create Mac toolbars
-//    createMacToolBars();
-//#else
     // Create the toolbars
     createToolBars();
-//#endif
 
     // Create system tray icon and notification
     createTrayIcon(networkStyle);
@@ -314,7 +293,7 @@ void BitcoinGUI::createActions(const NetworkStyle* networkStyle)
 {
     QActionGroup* tabGroup = new QActionGroup(this);
 
-    overviewAction = new QAction(QIcon(":/icons/overview"), tr("& Overview "), this);
+    overviewAction = new QAction(QIcon(":/icons/overview"), tr("&Overview"), this);
     overviewAction->setStatusTip(tr("Show general overview of wallet"));
     overviewAction->setToolTip(overviewAction->statusTip());
     overviewAction->setCheckable(true);
@@ -325,7 +304,7 @@ void BitcoinGUI::createActions(const NetworkStyle* networkStyle)
 #endif
     tabGroup->addAction(overviewAction);
 
-    sendCoinsAction = new QAction(QIcon(":/icons/send"), tr("&  Send  "), this);
+    sendCoinsAction = new QAction(QIcon(":/icons/send"), tr("&Send"), this);
     sendCoinsAction->setStatusTip(tr("Send coins to a TWINS address"));
     sendCoinsAction->setToolTip(sendCoinsAction->statusTip());
     sendCoinsAction->setCheckable(true);
@@ -336,7 +315,7 @@ void BitcoinGUI::createActions(const NetworkStyle* networkStyle)
 #endif
     tabGroup->addAction(sendCoinsAction);
 
-    receiveCoinsAction = new QAction(QIcon(":/icons/receiving_addresses"), tr("& Receive "), this);
+    receiveCoinsAction = new QAction(QIcon(":/icons/receiving_addresses"), tr("&Receive"), this);
     receiveCoinsAction->setStatusTip(tr("Request payments (generates QR codes and twins: URIs)"));
     receiveCoinsAction->setToolTip(receiveCoinsAction->statusTip());
     receiveCoinsAction->setCheckable(true);
@@ -563,42 +542,6 @@ void BitcoinGUI::createMenuBar()
     help->addAction(aboutQtAction);
 }
 
-//Note native mac toolbar
-/*void BitcoinGUI::createMacToolBars(){
-       if (walletFrame) {
-
-           QMacToolBar *toolBar = new QMacToolBar(this);
-
-           QMacToolBarItem *overviewToolBarItem = toolBar->addItem(QIcon(":/icons/overview"), QStringLiteral("Overview"));
-           connect(overviewToolBarItem, SIGNAL(activated()), this, SLOT(showNormalIfMinimized()));
-           connect(overviewToolBarItem, SIGNAL(activated()), this, SLOT(gotoOverviewPage()));
-
-           QMacToolBarItem *sendToolBarItem = toolBar->addItem(QIcon(":/icons/send"), QStringLiteral("Send"));
-           connect(sendToolBarItem, SIGNAL(activated()), this, SLOT(showNormalIfMinimized()));
-           connect(sendToolBarItem, SIGNAL(activated()), this, SLOT(gotoSendCoinsPage()));
-
-           QMacToolBarItem *receiveToolBarItem = toolBar->addItem(QIcon(":/icons/receiving_addresses"), QStringLiteral("Receive"));
-           connect(receiveToolBarItem, SIGNAL(activated()), this, SLOT(showNormalIfMinimized()));
-           connect(receiveToolBarItem, SIGNAL(activated()), this, SLOT(gotoReceiveCoinsPage()));
-
-           QMacToolBarItem *historyToolBarItem = toolBar->addItem(QIcon(":/icons/history"), QStringLiteral("Transactions"));
-           connect(historyToolBarItem, SIGNAL(activated()), this, SLOT(showNormalIfMinimized()));
-           connect(historyToolBarItem, SIGNAL(activated()), this, SLOT(gotoHistoryPage()));
-
-
-           QSettings settings;
-           if (settings.value("fShowMasternodesTab").toBool()) {
-               QMacToolBarItem *masternodesToolBarItem = toolBar->addItem(QIcon(":/icons/masternodes"), QStringLiteral("Masternodes"));
-
-               connect(masternodesToolBarItem, SIGNAL(activated()), this, SLOT(showNormalIfMinimized()));
-               connect(masternodesToolBarItem, SIGNAL(activated()), this, SLOT(gotoMasternodePage()));
-           }
-
-           this->window()->winId(); // create window->windowhandle()
-           toolBar->attachToWindow(this->window()->windowHandle());
-       }
-}*/
-
 void BitcoinGUI::createToolBars()
 {
     if (walletFrame) {
@@ -617,7 +560,7 @@ void BitcoinGUI::createToolBars()
         toolbar->addAction(receiveCoinsAction);
         //toolbar->addAction(privacyAction);
         toolbar->addAction(historyAction);
-        //toolbar->addAction(privacyAction);
+
         QSettings settings;
         if (settings.value("fShowMasternodesTab").toBool()) {
             toolbar->addAction(masternodeAction);

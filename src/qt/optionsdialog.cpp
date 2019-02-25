@@ -42,20 +42,6 @@ OptionsDialog::OptionsDialog(QWidget* parent, bool enableWallet) : QDialog(paren
     ui->setupUi(this);
     GUIUtil::restoreWindowGeometry("nOptionsDialogWindow", this->size(), this);
 
-    //set bnt style
-    GUIUtil::setStyle(ui->resetButton);
-    GUIUtil::setStyle(ui->okButton);
-    GUIUtil::setStyle(ui->cancelButton);
-
-    //set combobox style
-    GUIUtil::setStyle(ui->lang);
-    GUIUtil::setStyle(ui->theme);
-    GUIUtil::setStyle(ui->unit);
-    GUIUtil::setStyle(ui->digits);
-
-    //set tabcontrol style
-     GUIUtil::setStyle(ui->tabWidget);
-
     /* Main elements init */
     ui->databaseCache->setMinimum(nMinDbCache);
     ui->databaseCache->setMaximum(nMaxDbCache);

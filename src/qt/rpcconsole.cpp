@@ -270,25 +270,6 @@ RPCConsole::RPCConsole(QWidget* parent) : QDialog(parent, Qt::WindowSystemMenuHi
     ui->openDebugLogfileButton->setIcon(QIcon(":/icons/export"));
 #endif
 
-    //set bnt style
-    GUIUtil::setStyle(ui->openDebugLogfileButton);
-    GUIUtil::setStyle(ui->clearButton);
-    GUIUtil::setStyle(ui->btnClearTrafficGraph);
-    GUIUtil::setStyle(ui->btn_salvagewallet);
-    GUIUtil::setStyle(ui->btn_rescan);
-    GUIUtil::setStyle(ui->btn_zapwallettxes1);
-    GUIUtil::setStyle(ui->btn_zapwallettxes2);
-    GUIUtil::setStyle(ui->btn_upgradewallet);
-    GUIUtil::setStyle(ui->btn_reindex);
-    GUIUtil::setStyle(ui->btn_resync);
-
-    //set tabcontrol style
-    GUIUtil::setStyle(ui->tabWidget);
-
-    //set tableStyle
-    GUIUtil::setStyle(ui->peerWidget);
-    GUIUtil::setStyle(ui->banlistWidget);
-
     // Install event filter for up and down arrow
     ui->lineEdit->installEventFilter(this);
     ui->messagesWidget->installEventFilter(this);

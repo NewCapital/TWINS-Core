@@ -438,14 +438,6 @@ BlockExplorer::BlockExplorer(QWidget* parent) : QMainWindow(parent),
 {
     ui->setupUi(this);
 
-    //set stylesheet
-    GUIUtil::setStyleSheet(this);
-
-    //set btn style
-    GUIUtil::setStyle(ui->back);
-    GUIUtil::setStyle(ui->forward);
-    GUIUtil::setStyle(ui->pushSearch);
-
     connect(ui->pushSearch, SIGNAL(released()), this, SLOT(onSearch()));
     connect(ui->content, SIGNAL(linkActivated(const QString&)), this, SLOT(goTo(const QString&)));
     connect(ui->back, SIGNAL(released()), this, SLOT(back()));

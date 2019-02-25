@@ -29,20 +29,6 @@ Bip38ToolDialog::Bip38ToolDialog(QWidget* parent) : QDialog(parent, Qt::WindowSy
 
     ui->decryptedKeyOut_DEC->setPlaceholderText(tr("Click \"Decrypt Key\" to compute key"));
 
-    //set btn style
-    GUIUtil::setStyle(ui->decryptKeyButton_DEC);
-    GUIUtil::setStyle(ui->clearButton_DEC);
-    GUIUtil::setStyle(ui->importAddressButton_DEC);
-    GUIUtil::setStyle(ui->pasteButton_DEC);
-    GUIUtil::setStyle(ui->encryptKeyButton_ENC);
-    GUIUtil::setStyle(ui->clearButton_ENC);
-    GUIUtil::setStyle(ui->copyKeyButton_ENC);
-    GUIUtil::setStyle(ui->addressBookButton_ENC);
-    GUIUtil::setStyle(ui->pasteButton_ENC);
-
-    //set tabcontrol style
-    GUIUtil::setStyle(ui->tabWidget);
-
     GUIUtil::setupAddressWidget(ui->addressIn_ENC, this);
     ui->addressIn_ENC->installEventFilter(this);
     ui->passphraseIn_ENC->installEventFilter(this);

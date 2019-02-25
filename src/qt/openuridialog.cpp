@@ -18,9 +18,6 @@ OpenURIDialog::OpenURIDialog(QWidget* parent) : QDialog(parent, Qt::WindowSystem
 {
     ui->setupUi(this);
 
-    //set btn style
-    GUIUtil::setStyle(ui->buttonBox);
-
     ui->uriEdit->setPlaceholderText("twins:");
 }
 

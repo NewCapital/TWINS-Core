@@ -38,19 +38,6 @@ ReceiveCoinsDialog::ReceiveCoinsDialog(QWidget* parent) : QDialog(parent, Qt::Wi
     ui->removeRequestButton->setIcon(QIcon());
 #endif
 
-    //set bnt style
-    GUIUtil::setStyle(ui->receiveButton);
-    GUIUtil::setStyle(ui->clearButton);
-    GUIUtil::setStyle(ui->receivingAddressesButton);
-    GUIUtil::setStyle(ui->showRequestButton);
-    GUIUtil::setStyle(ui->removeRequestButton);
-
-    //set table style
-    GUIUtil::setStyle(ui->recentRequestsView);
-
-    //set editfield style
-    GUIUtil::setStyle(ui->reqAmount);
-
     // context menu actions
     QAction* copyLabelAction = new QAction(tr("Copy label"), this);
     QAction* copyMessageAction = new QAction(tr("Copy message"), this);

@@ -44,18 +44,6 @@ SendCoinsDialog::SendCoinsDialog(QWidget* parent) : QDialog(parent, Qt::WindowSy
     ui->sendButton->setIcon(QIcon());
 #endif
 
-    //set elements style
-    GUIUtil::setStyle(ui->sendButton);
-    GUIUtil::setStyle(ui->clearButton);
-    GUIUtil::setStyle(ui->addButton);
-    GUIUtil::setStyle(ui->buttonMinimizeFee);
-    GUIUtil::setStyle(ui->buttonChooseFee);
-    GUIUtil::setStyle(ui->pushButtonCoinControl);
-    //GUIUtil::setStyle(ui->scrollArea);
-
-    //set bitcoinamount field style
-    GUIUtil::setStyle(ui->customFee);
-
     GUIUtil::setupAddressWidget(ui->lineEditCoinControlChange, this);
 
     addEntry();
