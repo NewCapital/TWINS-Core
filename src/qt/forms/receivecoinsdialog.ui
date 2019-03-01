@@ -294,7 +294,7 @@
                   <string>&amp;Request payment</string>
                  </property>
                  <property name="icon">
-                  <iconset resource="../twins.qrc">
+                  <iconset>
                    <normaloff>:/icons/receiving_addresses</normaloff>:/icons/receiving_addresses</iconset>
                  </property>
                 </widget>
@@ -314,7 +314,7 @@
                   <string>Clear</string>
                  </property>
                  <property name="icon">
-                  <iconset resource="../twins.qrc">
+                  <iconset>
                    <normaloff>:/icons/remove</normaloff>:/icons/remove</iconset>
                  </property>
                  <property name="autoDefault">
@@ -341,7 +341,7 @@
                   <string>Receiving Addresses</string>
                  </property>
                  <property name="icon">
-                  <iconset resource="../twins.qrc">
+                  <iconset>
                    <normaloff>:/icons/address-book</normaloff>:/icons/address-book</iconset>
                  </property>
                  <property name="autoDefault">
@@ -402,6 +402,12 @@
              <property name="contextMenuPolicy">
               <enum>Qt::CustomContextMenu</enum>
              </property>
+             <property name="frameShape">
+              <enum>QFrame::NoFrame</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Plain</enum>
+             </property>
              <property name="tabKeyNavigation">
               <bool>false</bool>
              </property>
@@ -424,7 +430,7 @@
                 <string>Show</string>
                </property>
                <property name="icon">
-                <iconset resource="../twins.qrc">
+                <iconset>
                  <normaloff>:/icons/edit</normaloff>:/icons/edit</iconset>
                </property>
                <property name="autoDefault">
@@ -444,7 +450,7 @@
                 <string>Remove</string>
                </property>
                <property name="icon">
-                <iconset resource="../twins.qrc">
+                <iconset>
                  <normaloff>:/icons/remove</normaloff>:/icons/remove</iconset>
                </property>
                <property name="autoDefault">
@@ -497,8 +503,6 @@
   <tabstop>showRequestButton</tabstop>
   <tabstop>removeRequestButton</tabstop>
  </tabstops>
- <resources>
-  <include location="../twins.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>
