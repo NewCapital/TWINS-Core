@@ -100,6 +100,8 @@ private:
     QAction* masternodeAction;
     QAction* quitAction;
     QAction* sendCoinsAction;
+    QAction* showShopAction;
+    QAction* showStatisticsAction;
     QAction* usedSendingAddressesAction;
     QAction* usedReceivingAddressesAction;
     QAction* signMessageAction;
@@ -229,7 +231,10 @@ private slots:
     void gotoPrivacyPage();
     /** Switch to send coins page */
     void gotoSendCoinsPage(QString addr = "");
-
+    /** Open shop web page */
+    void gotoShopPage();
+    /** Open statistics web page */
+    void gotoStatisticsPage();
     /** Show Sign/Verify Message dialog and switch to sign message tab */
     void gotoSignMessageTab(QString addr = "");
     /** Show Sign/Verify Message dialog and switch to verify message tab */

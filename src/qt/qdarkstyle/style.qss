@@ -673,6 +673,11 @@ QToolBar QToolButton{
     min-width: 70px;
 }
 
+QToolBar QToolButton:hover{
+    outline: none;
+    border: none;
+}
+
 QToolBar::handle:horizontal {
     width: 6px;
     image: url(:/qss_icons/qdarkstyle/rc/Hmovetoolbar.png);
@@ -690,6 +695,7 @@ QToolBar::separator:horizontal {
 
 QToolBar::separator:vertical {
     height: 3px;
+    min-width: 70px;
     image: url(:/qss_icons/qdarkstyle/rc/Vsepartoolbar.png);
 }
 

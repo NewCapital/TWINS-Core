@@ -57,6 +57,7 @@
 #include <QToolBar>
 #include <QUrlQuery>
 #include <QVBoxLayout>
+#include <QDesktopServices>
 
 const QString BitcoinGUI::DEFAULT_WALLET = "~Default";
 
@@ -293,6 +294,7 @@ void BitcoinGUI::createActions(const NetworkStyle* networkStyle)
 {
     QActionGroup* tabGroup = new QActionGroup(this);
 
+    //Init Overview Action
     overviewAction = new QAction(QIcon(":/icons/overview"), tr("&Overview"), this);
     overviewAction->setStatusTip(tr("Show general overview of wallet"));
     overviewAction->setToolTip(overviewAction->statusTip());
@@ -304,6 +306,7 @@ void BitcoinGUI::createActions(const NetworkStyle* networkStyle)
 #endif
     tabGroup->addAction(overviewAction);
 
+    //Init Send Action
     sendCoinsAction = new QAction(QIcon(":/icons/send"), tr("&Send"), this);
     sendCoinsAction->setStatusTip(tr("Send coins to a TWINS address"));
     sendCoinsAction->setToolTip(sendCoinsAction->statusTip());
@@ -315,6 +318,7 @@ void BitcoinGUI::createActions(const NetworkStyle* networkStyle)
 #endif
     tabGroup->addAction(sendCoinsAction);
 
+    //Init Receive Action
     receiveCoinsAction = new QAction(QIcon(":/icons/receiving_addresses"), tr("&Receive"), this);
     receiveCoinsAction->setStatusTip(tr("Request payments (generates QR codes and twins: URIs)"));
     receiveCoinsAction->setToolTip(receiveCoinsAction->statusTip());
@@ -326,6 +330,7 @@ void BitcoinGUI::createActions(const NetworkStyle* networkStyle)
 #endif
     tabGroup->addAction(receiveCoinsAction);
 
+    //Init History Action
     historyAction = new QAction(QIcon(":/icons/history"), tr("&Transactions"), this);
     historyAction->setStatusTip(tr("Browse transaction history"));
     historyAction->setToolTip(historyAction->statusTip());
@@ -348,8 +353,7 @@ void BitcoinGUI::createActions(const NetworkStyle* networkStyle)
 #endif
     tabGroup->addAction(privacyAction);
 */
-#ifdef ENABLE_WALLET
-
+     //Init Masternodes Action
     QSettings settings;
     if (settings.value("fShowMasternodesTab").toBool()) {
         masternodeAction = new QAction(QIcon(":/icons/masternodes"), tr("&Masternodes"), this);
@@ -357,15 +361,28 @@ void BitcoinGUI::createActions(const NetworkStyle* networkStyle)
         masternodeAction->setToolTip(masternodeAction->statusTip());
         masternodeAction->setCheckable(true);
 #ifdef Q_OS_MAC
-        masternodeAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_6));
+        masternodeAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_5));
 #else
-        masternodeAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_6));
+        masternodeAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_5));
 #endif
         tabGroup->addAction(masternodeAction);
-        connect(masternodeAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
-        connect(masternodeAction, SIGNAL(triggered()), this, SLOT(gotoMasternodePage()));
     }
 
+    //Init Shop Action
+    showShopAction = new QAction(QIcon(":/icons/shop"), tr("&Shop"), this);
+    showShopAction->setStatusTip(tr("Open TWINS shop"));
+    showShopAction->setToolTip(historyAction->statusTip());
+    showShopAction->setCheckable(false);
+    tabGroup->addAction(showShopAction);
+
+    //Init Stat Action
+    showStatisticsAction = new QAction(QIcon(":/icons/stats"), tr("&Statistics"), this);
+    showStatisticsAction->setStatusTip(tr("Open TWINS statistics"));
+    showStatisticsAction->setToolTip(historyAction->statusTip());
+    showStatisticsAction->setCheckable(false);
+    tabGroup->addAction(showStatisticsAction);
+
+#ifdef ENABLE_WALLET
     // These showNormalIfMinimized are needed because Send Coins and Receive Coins
     // can be triggered from the tray menu, and need to show the GUI to be useful.
     connect(overviewAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
@@ -378,6 +395,16 @@ void BitcoinGUI::createActions(const NetworkStyle* networkStyle)
     //connect(privacyAction, SIGNAL(triggered()), this, SLOT(gotoPrivacyPage()));
     connect(historyAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
     connect(historyAction, SIGNAL(triggered()), this, SLOT(gotoHistoryPage()));
+
+    if (settings.value("fShowMasternodesTab").toBool()) {
+        connect(masternodeAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
+        connect(masternodeAction, SIGNAL(triggered()), this, SLOT(gotoMasternodePage()));
+    }
+
+    connect(showShopAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
+    connect(showShopAction, SIGNAL(triggered()), this, SLOT(gotoShopPage()));
+    connect(showStatisticsAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
+    connect(showStatisticsAction, SIGNAL(triggered()), this, SLOT(gotoStatisticsPage()));
 #endif // ENABLE_WALLET
 
     quitAction = new QAction(QIcon(":/icons/quit"), tr("E&xit"), this);
@@ -565,6 +592,12 @@ void BitcoinGUI::createToolBars()
         if (settings.value("fShowMasternodesTab").toBool()) {
             toolbar->addAction(masternodeAction);
         }
+
+        toolbar->addSeparator();
+
+        toolbar->addAction(showShopAction);
+        toolbar->addAction(showStatisticsAction);
+
         toolbar->setMovable(false); // remove unused icon in upper left corner
         toolbar->setOrientation(Qt::Vertical);
         toolbar->setIconSize(QSize(50,50));
@@ -829,6 +862,17 @@ void BitcoinGUI::gotoSendCoinsPage(QString addr)
     if (walletFrame) walletFrame->gotoSendCoinsPage(addr);
 }
 
+void BitcoinGUI::gotoShopPage()
+{
+    QDesktopServices::openUrl(QUrl("https://shop.win.win", QUrl::TolerantMode));
+    showShopAction->setChecked(false);
+}
+
+void BitcoinGUI::gotoStatisticsPage()
+{
+    QDesktopServices::openUrl(QUrl("https://win.win/twins-coin.html", QUrl::TolerantMode));
+    showStatisticsAction->setChecked(false);
+}
 void BitcoinGUI::gotoSignMessageTab(QString addr)
 {
     if (walletFrame) walletFrame->gotoSignMessageTab(addr);
