@@ -4924,6 +4924,24 @@ bool CVerifyDB::VerifyDB(CCoinsView* coinsview, int nCheckLevel, int nCheckDepth
         }
     }
 
+    // Validate & Enforce last checkpoint
+
+    CBlockIndex* pindex = chainActive.Tip();
+    int twinsLastCheckpoint = 0;
+
+    if (pindex)
+      twinsLastCheckpoint = Checkpoints::GetClosestCheckpoint(pindex->nHeight);
+
+    if (twinsLastCheckpoint) {
+      LogPrintf("Validating Last Checkpoint (current heigh=%s last checkpoint heigh=%s)...", pindex->nHeight, twinsLastCheckpoint);
+      if (!Checkpoints::CheckBlock(twinsLastCheckpoint,chainActive[twinsLastCheckpoint]->GetBlockHash())) {
+        LogPrintf("FAILED !!!\n");
+        return error("VerifyDB() : *** Checkpoint validation at block %s FAILED", twinsLastCheckpoint);
+      } else {
+        LogPrintf("Passed\n");
+      }
+    }
+
     LogPrintf("No coin database inconsistencies in last %i blocks (%i transactions)\n", chainActive.Height() - pindexState->nHeight, nGoodTransactions);
 
     return true;
@@ -6433,11 +6451,11 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
 //       it was the one which was commented out
 int ActiveProtocol()
 {
-    // SPORK_14 is used for 70913 (v3.1.0+)
+    // SPORK_14 is used for 70915 (v3.2.1+)
     if (IsSporkActive(SPORK_14_NEW_PROTOCOL_ENFORCEMENT))
             return MIN_PEER_PROTO_VERSION_AFTER_ENFORCEMENT;
 
-    // SPORK_15 was used for 70912 (v3.0.5+), commented out now.
+    // SPORK_15 reserved for future use, commented out now.
     //if (IsSporkActive(SPORK_15_NEW_PROTOCOL_ENFORCEMENT_2))
     //        return MIN_PEER_PROTO_VERSION_AFTER_ENFORCEMENT;
 

@@ -1542,7 +1542,7 @@ bool AppInit2()
                 bool fRet = uiInterface.ThreadSafeMessageBox(
                     strLoadError + ".\n\n" + _("Do you want to rebuild the block database now?"),
                     "", CClientUIInterface::MSG_ERROR | CClientUIInterface::BTN_ABORT);
-                if (fRet) {
+                if (fRet || GetBoolArg("-daemon", false)) { // reIndex automatically, if started as a daemon
                     fReindex = true;
                     fRequestShutdown = false;
                 } else {

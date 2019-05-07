@@ -13,7 +13,7 @@
 
 class CBlockIndex;
 
-/** 
+/**
  * Block-chain checkpoints are compiled-in sanity checks.
  * They are updated every release or three.
  */
@@ -36,6 +36,9 @@ int GetTotalBlocksEstimate();
 
 //! Returns last CBlockIndex* in mapBlockIndex that is a checkpoint
 CBlockIndex* GetLastCheckpoint();
+
+//! Returns closest Checkpoint to a given block number
+int GetClosestCheckpoint(int blocknum = 0);
 
 double GuessVerificationProgress(CBlockIndex* pindex, bool fSigchecks = true);
 

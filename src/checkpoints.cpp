@@ -100,4 +100,17 @@ CBlockIndex* GetLastCheckpoint()
     return NULL;
 }
 
+int GetClosestCheckpoint(int blocknum) {
+  if (!fEnabled)
+      return 0;
+
+  const MapCheckpoints& checkpoints = *Params().Checkpoints().mapCheckpoints;
+
+  BOOST_REVERSE_FOREACH (const MapCheckpoints::value_type& i, checkpoints) {
+      if (i.first < blocknum)
+          return i.first;
+  }
+  return 0;
+}
+
 } // namespace Checkpoints

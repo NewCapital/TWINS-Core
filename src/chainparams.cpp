@@ -54,12 +54,22 @@ static void convertSeed6(std::vector<CAddress>& vSeedsOut, const SeedSpec6* data
 // + Contains no strange transactions
 static Checkpoints::MapCheckpoints mapCheckpoints =
     boost::assign::map_list_of
-    (0, uint256("0000071cf2d95aec5ba4818418756c93cb12cd627191710e8969f2f35c3530de")) // genesis
-    (2000, uint256("70362c3e307213d37dcc57d89f64d9bdeb7779e368f1c34c9b24af0dce72a6ae"));
+    (0,     uint256("0000071cf2d95aec5ba4818418756c93cb12cd627191710e8969f2f35c3530de")) // genesis
+    (2000,  uint256("70362c3e307213d37dcc57d89f64d9bdeb7779e368f1c34c9b24af0dce72a6ae"))
+    (50000, uint256("f5c1fe5c20a9f1fd981f5292d49293e59dd6fba685021994891f02667dce086b"))
+    (80000, uint256("917998d20d8447861ef56dfc401bfa026ed5230953e20c046db2634f2b7e96df")) // split(s) caused by
+    (81000, uint256("90555f5617101e868f41faf66c976b63c7a86b6c521c6f7e40f4aed8dd88be55")) // FakePoS attack are
+    (82000, uint256("71ab39d5584b00e3b82e4e5bf35eb686278bbee50c02c6006f02d971ec52e57f")) // somewhere between
+    (83000, uint256("0c05d80f0773e8d1a306ddcaa0c3d28c460e18e327a5b4f9369e0920bb91cf09")) // blocks 80,000 and 84,000
+    (84123, uint256("1db6bab4574c294c9b5378e23997bc8a383f4ae25934041fb380634c1678d2c1")) //
+    (85000, uint256("4b74d103475d7d606de8534a87bb3449fdf11e92e9dd6baa5fb7f1fe12656e9b"))
+    (87000, uint256("6514126e1b1439b9b8a16657caff1f9bb7742d355e2e825a9a46e48aa99ee91e"))
+    (89000, uint256("4ea0c0c13808fc908de9d24b318bba3330eb4626d7188ee089b42264db90fb17"))
+    (93000, uint256("9068c3e6fb672ff33b91c35ae3fa466f4f5b57da53d332bdfb339ca5bf2219a2"));
 static const Checkpoints::CCheckpointData data = {
     &mapCheckpoints,
-    1546790318, // * UNIX timestamp of last checkpoint block
-    0,          // * total number of transactions between genesis and last checkpoint
+    1557154659, // * UNIX timestamp of last checkpoint block
+    233420,          // * total number of transactions between genesis and last checkpoint
                 //   (the tx=... number in the SetBestChain debug.log lines)
     0           // * estimated number of transactions per day after checkpoint
 };
