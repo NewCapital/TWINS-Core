@@ -92,6 +92,9 @@ public:
     virtual const Checkpoints::CCheckpointData& Checkpoints() const = 0;
     int PoolMaxTransactions() const { return nPoolMaxTransactions; }
 
+    /** TWINS part **/
+    CAmount MasternodeCollateral() const { return nMasternodeCollateral; }
+
     /** Spork key and Masternode Handling **/
     std::string SporkKey() const { return strSporkKey; }
     std::string SporkKeyOld() const { return strSporkKeyOld; }
@@ -152,6 +155,8 @@ protected:
     int nMaturity;
     int nModifierUpdateBlock;
     CAmount nMaxMoneyOut;
+    /*TWINS part */
+    CAmount nMasternodeCollateral;
     int nMinerThreads;
     std::vector<CDNSSeedData> vSeeds;
     std::vector<unsigned char> base58Prefixes[MAX_BASE58_TYPES];
