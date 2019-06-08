@@ -92,6 +92,8 @@ static const CRPCConvertParam vRPCConvertParams[] =
         {"importaddress", 2},
         {"verifychain", 0},
         {"verifychain", 1},
+        {"addcheckpoint", 0},
+        {"addcheckpoint", 2},
         {"keypoolrefill", 0},
         {"getrawmempool", 0},
         {"estimatefee", 0},

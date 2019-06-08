@@ -3545,6 +3545,9 @@ bool InvalidateBlock(CValidationState& state, CBlockIndex* pindex)
 {
     AssertLockHeld(cs_main);
 
+    if (pindex == NULL)
+        return false;
+
     // Mark the block itself as invalid.
     pindex->nStatus |= BLOCK_FAILED_VALID;
     setDirtyBlockIndex.insert(pindex);
@@ -3566,7 +3569,7 @@ bool InvalidateBlock(CValidationState& state, CBlockIndex* pindex)
     // add them again.
     BlockMap::iterator it = mapBlockIndex.begin();
     while (it != mapBlockIndex.end()) {
-        if (it->second->IsValid(BLOCK_VALID_TRANSACTIONS) && it->second->nChainTx && !setBlockIndexCandidates.value_comp()(it->second, chainActive.Tip())) {
+        if (it->second != NULL && it->second->IsValid(BLOCK_VALID_TRANSACTIONS) && it->second->nChainTx && !setBlockIndexCandidates.value_comp()(it->second, chainActive.Tip())) {
             setBlockIndexCandidates.insert(it->second);
         }
         it++;
@@ -3580,12 +3583,15 @@ bool ReconsiderBlock(CValidationState& state, CBlockIndex* pindex)
 {
     AssertLockHeld(cs_main);
 
+    if (pindex == NULL)
+        return false;
+
     int nHeight = pindex->nHeight;
 
     // Remove the invalidity flag from this block and all its descendants.
     BlockMap::iterator it = mapBlockIndex.begin();
     while (it != mapBlockIndex.end()) {
-        if (!it->second->IsValid() && it->second->GetAncestor(nHeight) == pindex) {
+        if (it->second != NULL && !it->second->IsValid() && it->second->GetAncestor(nHeight) == pindex) {
             it->second->nStatus &= ~BLOCK_FAILED_MASK;
             setDirtyBlockIndex.insert(it->second);
             if (it->second->IsValid(BLOCK_VALID_TRANSACTIONS) && it->second->nChainTx && setBlockIndexCandidates.value_comp()(chainActive.Tip(), it->second)) {
@@ -4461,6 +4467,65 @@ bool AcceptBlock(CBlock& block, CValidationState& state, CBlockIndex** ppindex, 
     } catch (std::runtime_error& e) {
         return state.Abort(std::string("System error: ") + e.what());
     }
+
+    // Check checkpoint spork
+    nHeight = GetSporkValue(SPORK_TWINS_01_CHECKPOINT_HEIGHT);
+    uint256 hash = (uint256(GetSporkValue(SPORK_TWINS_02_CHECKPOINT_HASHBITS_0_63))) +
+                   (uint256(GetSporkValue(SPORK_TWINS_03_CHECKPOINT_HASHBITS_64_127)) << 64) +
+                   (uint256(GetSporkValue(SPORK_TWINS_04_CHECKPOINT_HASHBITS_128_191)) << 128) +
+                   (uint256(GetSporkValue(SPORK_TWINS_05_CHECKPOINT_HASHBITS_192_255)) << 192);
+    bool fIsHash = hash.Get64(0) && hash.Get64(1) && hash.Get64(2) && hash.Get64(3);
+    bool fUpdate = false;
+
+    Checkpoints::MapCheckpoints& checkpoints = *Params().Checkpoints().mapCheckpoints;
+    if (checkpoints.count(nHeight))
+    {
+        if (fIsHash)
+        {
+            if (checkpoints.at(nHeight) != hash)
+            {
+                checkpoints.at(nHeight) = hash;
+                fUpdate = true;
+            }
+        }
+        else
+        {
+            checkpoints.erase(nHeight);
+        }
+    }
+    else if (fIsHash)
+    {
+        checkpoints.insert(std::make_pair(nHeight, hash));
+        fUpdate = true;
+    }
+
+    if (fUpdate && nHeight <= chainActive.Height())
+    {
+        CValidationState state;
+
+        {
+            LOCK(cs_main);
+            InvalidateBlock(state, chainActive[nHeight]);
+        }
+
+        if (state.IsValid()) {
+            ActivateBestChain(state);
+        }
+    }
+
+    if (fUpdate && mapBlockIndex[hash])
+    {
+        CValidationState state;
+        {
+            LOCK(cs_main);
+            ReconsiderBlock(state, mapBlockIndex[hash]);
+        }
+
+        if (state.IsValid()) {
+            ActivateBestChain(state);
+        }
+    }
+    //
 
     return true;
 }

@@ -11,6 +11,7 @@
 #include "clientversion.h"
 #include "main.h"
 #include "rpc/server.h"
+#include "spork.h"
 #include "sync.h"
 #include "txdb.h"
 #include "util.h"
@@ -944,6 +945,117 @@ UniValue reconsiderblock(const UniValue& params, bool fHelp)
 
     if (!state.IsValid()) {
         throw JSONRPCError(RPC_DATABASE_ERROR, state.GetRejectReason());
+    }
+
+    return NullUniValue;
+}
+
+UniValue addcheckpoint(const UniValue& params, bool fHelp)
+{
+    if (fHelp || params.size() < 1 || params.size() > 3)
+        throw runtime_error(
+            "addcheckpoint \"height\" \"hash\"\n"
+            "\nAdd checkpoint and resync blockchain if necessary.\n"
+
+            "\nArguments:\n"
+            "1. height (numeric, required) the number of the block to add checkpoint\n"
+            "2. hash   (string, optional) the hash of the block to mark as checkpoint\n"
+            "3. spork  (boolean, optional) store checkpoint into spork\n"
+
+            "\nExamples:\n" +
+            HelpExampleCli("addcheckpoint", "\"blockheight\", \"blockhash\"") + HelpExampleRpc("addcheckpoint", "\"blockheight\", \"blockhash\""));
+
+    int nHeight = params[0].get_int();
+    std::string strHash = "";
+    if (params.size()>1)
+        strHash = params[1].get_str();
+    uint256 hash(strHash);
+    bool fIsHash = hash.Get64(0) && hash.Get64(1) && hash.Get64(2) && hash.Get64(3);
+    bool fUpdate = false;
+
+    if (nHeight < 0)
+        throw JSONRPCError(RPC_INVALID_PARAMETER, "invalid block height");
+
+    Checkpoints::MapCheckpoints& checkpoints = *Params().Checkpoints().mapCheckpoints;
+    if (checkpoints.count(nHeight))
+    {
+        if (fIsHash)
+        {
+            if (checkpoints.at(nHeight) != hash)
+            {
+                checkpoints.at(nHeight) = hash;
+                fUpdate = true;
+            }
+        }
+        else
+        {
+            checkpoints.erase(nHeight);
+        }
+    }
+    else if (fIsHash)
+    {
+        checkpoints.insert(std::make_pair(nHeight, hash));
+        fUpdate = true;
+    }
+
+    if (params.size()>2 && params[2].get_bool())
+    {
+        if (sporkManager.UpdateSpork(SPORK_TWINS_01_CHECKPOINT_HEIGHT, 4070908800))
+        {
+            if (sporkManager.UpdateSpork(SPORK_TWINS_02_CHECKPOINT_HASHBITS_0_63, int64_t(hash.Get64(0))) &&
+                sporkManager.UpdateSpork(SPORK_TWINS_03_CHECKPOINT_HASHBITS_64_127, int64_t(hash.Get64(1))) &&
+                sporkManager.UpdateSpork(SPORK_TWINS_04_CHECKPOINT_HASHBITS_128_191, int64_t(hash.Get64(2))) &&
+                sporkManager.UpdateSpork(SPORK_TWINS_05_CHECKPOINT_HASHBITS_192_255, int64_t(hash.Get64(3))))
+            {
+                if (hash.Get64(0) && hash.Get64(1) && hash.Get64(2) && hash.Get64(3) && !sporkManager.UpdateSpork(SPORK_TWINS_01_CHECKPOINT_HEIGHT, nHeight))
+                {
+                    return "spork update failure";
+                }
+            }
+            else
+            {
+                return "spork update incomplete";
+            }
+        }
+        else
+        {
+            return "spork update not possible";
+        }
+    }
+
+    if (fUpdate && nHeight <= chainActive.Height())
+    {
+        CValidationState state;
+
+        {
+            LOCK(cs_main);
+            InvalidateBlock(state, chainActive[nHeight]);
+        }
+
+        if (state.IsValid()) {
+            ActivateBestChain(state);
+        }
+
+        if (!state.IsValid()) {
+            throw JSONRPCError(RPC_DATABASE_ERROR, state.GetRejectReason());
+        }
+    }
+
+    if (fUpdate && mapBlockIndex[hash])
+    {
+        CValidationState state;
+        {
+            LOCK(cs_main);
+            ReconsiderBlock(state, mapBlockIndex[hash]);
+        }
+
+        if (state.IsValid()) {
+            ActivateBestChain(state);
+        }
+
+        if (!state.IsValid()) {
+            throw JSONRPCError(RPC_DATABASE_ERROR, state.GetRejectReason());
+        }
     }
 
     return NullUniValue;
