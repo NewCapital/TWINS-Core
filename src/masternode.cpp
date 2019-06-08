@@ -6,6 +6,7 @@
 
 #include "masternode.h"
 #include "addrman.h"
+#include "coins.h"
 #include "masternodeman.h"
 #include "obfuscation.h"
 #include "sync.h"
@@ -15,6 +16,22 @@
 map<uint256, int> mapSeenMasternodeScanningErrors;
 // cache block hashes as we calculate them
 std::map<int64_t, uint256> mapCacheBlockHashes;
+
+static int GetMasternodeTierRounds(CTxIn vin)
+{
+    LOCK(cs_main);
+    CCoinsViewCache cache(pcoinsTip);
+    const CCoins* coins = cache.AccessCoins(vin.prevout.hash);
+    if (coins && coins->IsAvailable(vin.prevout.n) && Params().isMasternodeCollateral(coins->vout[vin.prevout.n].nValue))
+    {
+        if (coins->vout[vin.prevout.n].nValue == Params().Tier1mCollateral()) return Params().Tier1mProbability();
+        if (coins->vout[vin.prevout.n].nValue == Params().Tier5mCollateral()) return Params().Tier5mProbability();
+        if (coins->vout[vin.prevout.n].nValue == Params().Tier10mCollateral()) return Params().Tier10mProbability();
+        if (coins->vout[vin.prevout.n].nValue == Params().Tier20mCollateral()) return Params().Tier20mProbability();
+        if (coins->vout[vin.prevout.n].nValue == Params().Tier100mCollateral()) return Params().Tier100mProbability();
+    }
+    return 1;
+}
 
 //Get the last hash that matches the modulus given. Processed in reverse order
 bool GetBlockHash(uint256& hash, int nBlockHeight)
@@ -78,8 +95,6 @@ CMasternode::CMasternode()
     nScanningErrorCount = 0;
     nLastScanningErrorBlockHeight = 0;
     lastTimeChecked = 0;
-    nLastDsee = 0;  // temporary, do not save. Remove after migration to v12
-    nLastDseep = 0; // temporary, do not save. Remove after migration to v12
 }
 
 CMasternode::CMasternode(const CMasternode& other)
@@ -103,8 +118,6 @@ CMasternode::CMasternode(const CMasternode& other)
     nScanningErrorCount = other.nScanningErrorCount;
     nLastScanningErrorBlockHeight = other.nLastScanningErrorBlockHeight;
     lastTimeChecked = 0;
-    nLastDsee = other.nLastDsee;   // temporary, do not save. Remove after migration to v12
-    nLastDseep = other.nLastDseep; // temporary, do not save. Remove after migration to v12
 }
 
 CMasternode::CMasternode(const CMasternodeBroadcast& mnb)
@@ -128,8 +141,6 @@ CMasternode::CMasternode(const CMasternodeBroadcast& mnb)
     nScanningErrorCount = 0;
     nLastScanningErrorBlockHeight = 0;
     lastTimeChecked = 0;
-    nLastDsee = 0;  // temporary, do not save. Remove after migration to v12
-    nLastDseep = 0; // temporary, do not save. Remove after migration to v12
 }
 
 //
@@ -172,16 +183,24 @@ uint256 CMasternode::CalculateScore(int mod, int64_t nBlockHeight)
         return 0;
     }
 
+    int nRounds = GetMasternodeTierRounds(vin);
+
+    uint256 r;
+
     CHashWriter ss(SER_GETHASH, PROTOCOL_VERSION);
     ss << hash;
     uint256 hash2 = ss.GetHash();
 
     CHashWriter ss2(SER_GETHASH, PROTOCOL_VERSION);
     ss2 << hash;
-    ss2 << aux;
-    uint256 hash3 = ss2.GetHash();
+    for (int i = 0; i < nRounds; ++i) {
+        ss2 << aux;
+        uint256 hash3 = ss2.GetHash();
 
-    uint256 r = (hash3 > hash2 ? hash3 - hash2 : hash2 - hash3);
+        uint256 hashdiff = (hash3 > hash2 ? hash3 - hash2 : hash2 - hash3);
+
+        r = std::max(hashdiff, r);
+    }
 
     return r;
 }
@@ -214,20 +233,14 @@ void CMasternode::Check(bool forceCheck)
     }
 
     if (!unitTest) {
-        CValidationState state;
-        CMutableTransaction tx = CMutableTransaction();
-        CTxOut vout = CTxOut(Params().MasternodeCollateral(), obfuScationPool.collateralPubKey);
-        tx.vin.push_back(vin);
-        tx.vout.push_back(vout);
+        TRY_LOCK(cs_main, lockMain);
+        if (!lockMain) return;
 
-        {
-            TRY_LOCK(cs_main, lockMain);
-            if (!lockMain) return;
-
-            if (!AcceptableInputs(mempool, state, CTransaction(tx), false, NULL)) {
-                activeState = MASTERNODE_VIN_SPENT;
-                return;
-            }
+        CCoinsViewCache cache(pcoinsTip);
+        const CCoins* coins = cache.AccessCoins(vin.prevout.hash);
+        if (!coins || !coins->IsAvailable(vin.prevout.n) || !Params().isMasternodeCollateral(coins->vout[vin.prevout.n].nValue)) {
+            activeState = MASTERNODE_VIN_SPENT;
+            return;
         }
     }
 
@@ -585,10 +598,6 @@ bool CMasternodeBroadcast::CheckInputsAndAdd(int& nDoS)
     }
 
     CValidationState state;
-    CMutableTransaction tx = CMutableTransaction();
-    CTxOut vout = CTxOut(Params().MasternodeCollateral(), obfuScationPool.collateralPubKey);
-    tx.vin.push_back(vin);
-    tx.vout.push_back(vout);
 
     {
         TRY_LOCK(cs_main, lockMain);
@@ -599,8 +608,9 @@ bool CMasternodeBroadcast::CheckInputsAndAdd(int& nDoS)
             return false;
         }
 
-        if (!AcceptableInputs(mempool, state, CTransaction(tx), false, NULL)) {
-            //set nDos
+        CCoinsViewCache cache(pcoinsTip);
+        const CCoins* coins = cache.AccessCoins(vin.prevout.hash);
+        if (!coins || !coins->IsAvailable(vin.prevout.n) || !Params().isMasternodeCollateral(coins->vout[vin.prevout.n].nValue)) {
             state.IsInvalid(nDoS);
             return false;
         }
