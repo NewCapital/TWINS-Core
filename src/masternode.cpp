@@ -26,7 +26,7 @@ static int GetMasternodeTierRounds(CTxIn vin)
     {
         if (coins->vout[vin.prevout.n].nValue == Params().Tier1mCollateral()) return Params().Tier1mProbability();
         if (coins->vout[vin.prevout.n].nValue == Params().Tier5mCollateral()) return Params().Tier5mProbability();
-        if (coins->vout[vin.prevout.n].nValue == Params().Tier10mCollateral()) return Params().Tier10mProbability();
+        // if (coins->vout[vin.prevout.n].nValue == Params().Tier10mCollateral()) return Params().Tier10mProbability();
         if (coins->vout[vin.prevout.n].nValue == Params().Tier20mCollateral()) return Params().Tier20mProbability();
         if (coins->vout[vin.prevout.n].nValue == Params().Tier100mCollateral()) return Params().Tier100mProbability();
     }

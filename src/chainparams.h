@@ -93,13 +93,14 @@ public:
     int PoolMaxTransactions() const { return nPoolMaxTransactions; }
 
     /** TWINS part **/
-    bool isMasternodeCollateral(CAmount nValue) const { return (nValue == nTier1mCollateral || nValue == nTier5mCollateral || nValue == nTier10mCollateral || nValue == nTier20mCollateral || nValue == nTier100mCollateral); }
+    // bool isMasternodeCollateral(CAmount nValue) const { return (nValue == nTier1mCollateral || nValue == nTier5mCollateral || nValue == nTier10mCollateral || nValue == nTier20mCollateral || nValue == nTier100mCollateral); }
+    bool isMasternodeCollateral(CAmount nValue) const { return (nValue == nTier1mCollateral || nValue == nTier5mCollateral || nValue == nTier20mCollateral || nValue == nTier100mCollateral); }
     CAmount Tier1mCollateral() const { return nTier1mCollateral; }
     CAmount Tier1mProbability() const { return nTier1mProbability; }
     CAmount Tier5mCollateral() const { return nTier5mCollateral; }
     CAmount Tier5mProbability() const { return nTier5mProbability; }
-    CAmount Tier10mCollateral() const { return nTier10mCollateral; }
-    CAmount Tier10mProbability() const { return nTier10mProbability; }
+    // CAmount Tier10mCollateral() const { return nTier10mCollateral; }
+    // CAmount Tier10mProbability() const { return nTier10mProbability; }
     CAmount Tier20mCollateral() const { return nTier20mCollateral; }
     CAmount Tier20mProbability() const { return nTier20mProbability; }
     CAmount Tier100mCollateral() const { return nTier100mCollateral; }
@@ -170,8 +171,8 @@ protected:
     CAmount nTier1mProbability;
     CAmount nTier5mCollateral;
     CAmount nTier5mProbability;
-    CAmount nTier10mCollateral;
-    CAmount nTier10mProbability;
+    // CAmount nTier10mCollateral;
+    // CAmount nTier10mProbability;
     CAmount nTier20mCollateral;
     CAmount nTier20mProbability;
     CAmount nTier100mCollateral;

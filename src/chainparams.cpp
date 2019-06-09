@@ -153,8 +153,8 @@ public:
         nTier1mProbability =                 1;
         nTier5mCollateral =     5000000 * COIN;
         nTier5mProbability =                 5;
-        nTier10mCollateral =   10000000 * COIN;
-        nTier10mProbability =               10;
+        // nTier10mCollateral =   10000000 * COIN;
+        // nTier10mProbability =               10;
         nTier20mCollateral =   20000000 * COIN;
         nTier20mProbability =               20;
         nTier100mCollateral = 100000000 * COIN;
@@ -300,8 +300,8 @@ public:
         nTier1mProbability =                 1;
         nTier5mCollateral =     5000000 * COIN;
         nTier5mProbability =                 5;
-        nTier10mCollateral =   10000000 * COIN;
-        nTier10mProbability =               10;
+        // nTier10mCollateral =   10000000 * COIN;
+        // nTier10mProbability =               10;
         nTier20mCollateral =   20000000 * COIN;
         nTier20mProbability =               20;
         nTier100mCollateral = 100000000 * COIN;
