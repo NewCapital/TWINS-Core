@@ -3545,6 +3545,9 @@ bool InvalidateBlock(CValidationState& state, CBlockIndex* pindex)
 {
     AssertLockHeld(cs_main);
 
+    if (pindex == NULL)
+        return false;
+
     // Mark the block itself as invalid.
     pindex->nStatus |= BLOCK_FAILED_VALID;
     setDirtyBlockIndex.insert(pindex);
@@ -3566,7 +3569,7 @@ bool InvalidateBlock(CValidationState& state, CBlockIndex* pindex)
     // add them again.
     BlockMap::iterator it = mapBlockIndex.begin();
     while (it != mapBlockIndex.end()) {
-        if (it->second->IsValid(BLOCK_VALID_TRANSACTIONS) && it->second->nChainTx && !setBlockIndexCandidates.value_comp()(it->second, chainActive.Tip())) {
+        if (it->second != NULL && it->second->IsValid(BLOCK_VALID_TRANSACTIONS) && it->second->nChainTx && !setBlockIndexCandidates.value_comp()(it->second, chainActive.Tip())) {
             setBlockIndexCandidates.insert(it->second);
         }
         it++;
@@ -3580,12 +3583,15 @@ bool ReconsiderBlock(CValidationState& state, CBlockIndex* pindex)
 {
     AssertLockHeld(cs_main);
 
+    if (pindex == NULL)
+        return false;
+
     int nHeight = pindex->nHeight;
 
     // Remove the invalidity flag from this block and all its descendants.
     BlockMap::iterator it = mapBlockIndex.begin();
     while (it != mapBlockIndex.end()) {
-        if (!it->second->IsValid() && it->second->GetAncestor(nHeight) == pindex) {
+        if (it->second != NULL && !it->second->IsValid() && it->second->GetAncestor(nHeight) == pindex) {
             it->second->nStatus &= ~BLOCK_FAILED_MASK;
             setDirtyBlockIndex.insert(it->second);
             if (it->second->IsValid(BLOCK_VALID_TRANSACTIONS) && it->second->nChainTx && setBlockIndexCandidates.value_comp()(chainActive.Tip(), it->second)) {
