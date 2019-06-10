@@ -47,6 +47,8 @@
 #include <boost/filesystem/fstream.hpp>
 #include <boost/thread.hpp>
 
+#include <spork.h>
+
 using namespace boost;
 using namespace std;
 using namespace libzerocoin;
@@ -109,6 +111,14 @@ static void CheckBlockIndex();
 CScript COINBASE_FLAGS;
 
 const string strMessageMagic = "DarkNet Signed Message:\n";
+
+bool isMasternodeCollateral(CAmount nValue) {
+  if (IsSporkActive(SPORK_TWINS_01_ENABLE_MASTERNODE_TIERS)) {
+    return Params().isMasternodeTierCollateral(nValue);
+  } else {
+    return Params().isMasternodeBaseCollateral(nValue);
+  }
+ }
 
 // Internal stuff
 namespace

@@ -29,7 +29,8 @@ std::map<int, CSporkMessage> mapSporksActive;
 // TWINS: on startup load spork values from previous session if they exist in the sporkDB
 void LoadSporksFromDB()
 {
-    for (int i = SPORK_START; i <= SPORK_END; ++i) {
+    for (int i = SPORK_START; i <= SPORK_TWINS_END; ++i) {
+        if (i > SPORK_END && i < SPORK_TWINS_START) i = SPORK_TWINS_START;
         // Since not all spork IDs are in use, we have to exclude undefined IDs
         std::string strSpork = sporkManager.GetSporkNameByID(i);
         if (strSpork == "Unknown") continue;
@@ -136,6 +137,8 @@ int64_t GetSporkValue(int nSporkID)
         if (nSporkID == SPORK_14_NEW_PROTOCOL_ENFORCEMENT) r = SPORK_14_NEW_PROTOCOL_ENFORCEMENT_DEFAULT;
         if (nSporkID == SPORK_15_NEW_PROTOCOL_ENFORCEMENT_2) r = SPORK_15_NEW_PROTOCOL_ENFORCEMENT_2_DEFAULT;
         if (nSporkID == SPORK_16_ZEROCOIN_MAINTENANCE_MODE) r = SPORK_16_ZEROCOIN_MAINTENANCE_MODE_DEFAULT;
+
+        if (nSporkID == SPORK_TWINS_01_ENABLE_MASTERNODE_TIERS) r = SPORK_TWINS_01_ENABLE_MASTERNODE_TIERS_DEFAULT;
 
         if (r == -1) LogPrintf("%s : Unknown Spork %d\n", __func__, nSporkID);
     }
@@ -287,6 +290,8 @@ int CSporkManager::GetSporkIDByName(std::string strName)
     if (strName == "SPORK_15_NEW_PROTOCOL_ENFORCEMENT_2") return SPORK_15_NEW_PROTOCOL_ENFORCEMENT_2;
     if (strName == "SPORK_16_ZEROCOIN_MAINTENANCE_MODE") return SPORK_16_ZEROCOIN_MAINTENANCE_MODE;
 
+    if (strName == "SPORK_TWINS_01_ENABLE_MASTERNODE_TIERS") return SPORK_TWINS_01_ENABLE_MASTERNODE_TIERS;
+
     return -1;
 }
 
@@ -303,6 +308,8 @@ std::string CSporkManager::GetSporkNameByID(int id)
     if (id == SPORK_14_NEW_PROTOCOL_ENFORCEMENT) return "SPORK_14_NEW_PROTOCOL_ENFORCEMENT";
     if (id == SPORK_15_NEW_PROTOCOL_ENFORCEMENT_2) return "SPORK_15_NEW_PROTOCOL_ENFORCEMENT_2";
     if (id == SPORK_16_ZEROCOIN_MAINTENANCE_MODE) return "SPORK_16_ZEROCOIN_MAINTENANCE_MODE";
+
+    if (id == SPORK_TWINS_01_ENABLE_MASTERNODE_TIERS) return "SPORK_TWINS_01_ENABLE_MASTERNODE_TIERS";
 
     return "Unknown";
 }
