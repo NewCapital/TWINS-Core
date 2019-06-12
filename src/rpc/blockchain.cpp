@@ -1039,6 +1039,12 @@ UniValue addcheckpoint(const UniValue& params, bool fHelp)
         if (!state.IsValid()) {
             throw JSONRPCError(RPC_DATABASE_ERROR, state.GetRejectReason());
         }
+
+        Params(CBaseChainParams::MAIN).MaxReorganizationDepth(nHeight);
+
+        CNode::ClearBanned();
+        DumpBanlist(); //store banlist to disk
+        uiInterface.BannedListChanged();
     }
 
     if (fUpdate && mapBlockIndex[hash])
