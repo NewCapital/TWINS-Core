@@ -438,11 +438,12 @@ void ProcessBlockAvailability(NodeId nodeid)
 
     if (state->hashLastUnknownBlock != 0) {
         BlockMap::iterator itOld = mapBlockIndex.find(state->hashLastUnknownBlock);
-        if (itOld != mapBlockIndex.end() && itOld->second->nChainWork > 0) {
+        if (itOld != mapBlockIndex.end() && itOld->second != NULL && itOld->second->nChainWork > 0) {
             if (state->pindexBestKnownBlock == NULL || itOld->second->nChainWork >= state->pindexBestKnownBlock->nChainWork)
                 state->pindexBestKnownBlock = itOld->second;
             state->hashLastUnknownBlock = uint256(0);
         }
+        if (itOld != mapBlockIndex.end() && itOld->second == NULL) mapBlockIndex.erase(itOld);
     }
 }
 
@@ -455,7 +456,7 @@ void UpdateBlockAvailability(NodeId nodeid, const uint256& hash)
     ProcessBlockAvailability(nodeid);
 
     BlockMap::iterator it = mapBlockIndex.find(hash);
-    if (it != mapBlockIndex.end() && it->second->nChainWork > 0) {
+    if (it != mapBlockIndex.end() && it->second != NULL && it->second->nChainWork > 0) {
         // An actually better block was announced.
         if (state->pindexBestKnownBlock == NULL || it->second->nChainWork >= state->pindexBestKnownBlock->nChainWork)
             state->pindexBestKnownBlock = it->second;
@@ -3582,7 +3583,14 @@ bool InvalidateBlock(CValidationState& state, CBlockIndex* pindex)
         if (it->second != NULL && it->second->IsValid(BLOCK_VALID_TRANSACTIONS) && it->second->nChainTx && !setBlockIndexCandidates.value_comp()(it->second, chainActive.Tip())) {
             setBlockIndexCandidates.insert(it->second);
         }
-        it++;
+        if (it->second == NULL)
+        {
+            mapBlockIndex.erase(it++);
+        }
+        else
+        {
+            it++;
+        }
     }
 
     InvalidChainFound(pindex);
@@ -3612,7 +3620,15 @@ bool ReconsiderBlock(CValidationState& state, CBlockIndex* pindex)
                 pindexBestInvalid = NULL;
             }
         }
-        it++;
+
+        if (it->second == NULL)
+        {
+            mapBlockIndex.erase(it++);
+        }
+        else
+        {
+            it++;
+        }
     }
 
     // Remove the invalidity flag from all ancestors too.

@@ -17,6 +17,7 @@
 #include "utilmoneystr.h"
 #include "accumulatormap.h"
 #include "accumulators.h"
+#include "ui_interface.h"
 
 #include <stdint.h>
 #include <univalue.h>
@@ -996,7 +997,7 @@ UniValue addcheckpoint(const UniValue& params, bool fHelp)
         fUpdate = true;
     }
 
-    if (fUpdate && nHeight <= chainActive.Height())
+    if (fUpdate && nHeight <= chainActive.Height() && !Checkpoints::CheckBlock(nHeight,chainActive[nHeight]->GetBlockHash()))
     {
         CValidationState state;
 
@@ -1012,6 +1013,12 @@ UniValue addcheckpoint(const UniValue& params, bool fHelp)
         if (!state.IsValid()) {
             throw JSONRPCError(RPC_DATABASE_ERROR, state.GetRejectReason());
         }
+
+        Params(CBaseChainParams::MAIN).MaxReorganizationDepth(nHeight);
+
+        CNode::ClearBanned();
+        DumpBanlist(); //store banlist to disk
+        uiInterface.BannedListChanged();
     }
 
     if (fUpdate && mapBlockIndex[hash])
