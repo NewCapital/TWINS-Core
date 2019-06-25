@@ -1,0 +1,81 @@
+policy_module(twins, 1.100.1)
+
+########################################
+#
+# Declarations
+#
+
+type twins_t;
+type twins_exec_t;
+init_daemon_domain(twins_t, twins_exec_t)
+
+permissive twins_t;
+
+type twins_initrc_exec_t;
+init_script_file(twins_initrc_exec_t)
+
+type twins_conf_t;
+files_type(twins_conf_t)
+
+type twins_var_lib_t;
+files_type(twins_var_lib_t)
+
+type twins_var_run_t;
+files_type(twins_var_run_t)
+
+type twins_port_t;
+corenet_port(twins_port_t)
+
+########################################
+#
+# twins local policy
+#
+allow twins_t self:process { fork };
+
+allow twins_t self:fifo_file rw_fifo_file_perms;
+allow twins_t self:unix_stream_socket create_stream_socket_perms;
+
+manage_dirs_pattern(twins_t, twins_conf_t, twins_conf_t)
+manage_files_pattern(twins_t, twins_conf_t, twins_conf_t)
+
+manage_dirs_pattern(twins_t, twins_var_lib_t, twins_var_lib_t)
+manage_files_pattern(twins_t, twins_var_lib_t, twins_var_lib_t)
+files_var_lib_filetrans(twins_t, twins_var_lib_t, { dir file })
+
+manage_dirs_pattern(twins_t, twins_var_run_t, twins_var_run_t)
+manage_files_pattern(twins_t, twins_var_run_t, twins_var_run_t)
+
+sysnet_dns_name_resolve(twins_t)
+corenet_all_recvfrom_unlabeled(twins_t)
+
+allow twins_t self:tcp_socket create_stream_socket_perms;
+corenet_tcp_sendrecv_generic_if(twins_t)
+corenet_tcp_sendrecv_generic_node(twins_t)
+corenet_tcp_sendrecv_all_ports(twins_t)
+corenet_tcp_bind_generic_node(twins_t)
+
+gen_require(`
+    type twins_port_t;
+')
+allow twins_t twins_port_t:tcp_socket name_bind;
+
+gen_require(`
+    type twins_port_t;
+')
+allow twins_t twins_port_t:tcp_socket name_connect;
+
+domain_use_interactive_fds(twins_t)
+
+files_read_etc_files(twins_t)
+
+miscfiles_read_localization(twins_t)
+
+sysnet_dns_name_resolve(twins_t)
+
+allow twins_t twins_exec_t:file execute_no_trans;
+allow twins_t self:process setsched;
+corecmd_exec_ls(twins_t)
+corenet_tcp_connect_http_port(twins_t)
+dev_read_urand(twins_t)
+fs_getattr_xattr_fs(twins_t)
+kernel_read_system_state(twins_t)

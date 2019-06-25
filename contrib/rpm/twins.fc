@@ -1,0 +1,8 @@
+/usr/bin/twins-cli		--	gen_context(system_u:object_r:twins_exec_t,s0)
+/usr/sbin/twinsd		--	gen_context(system_u:object_r:twins_exec_t,s0)
+/usr/lib(64)?/twins/twinsd		--	gen_context(system_u:object_r:twins_exec_t,s0)
+
+/etc/twins(/.*)?		gen_context(system_u:object_r:twins_conf_t,s0)
+/var/lib/twins(/.*)?		gen_context(system_u:object_r:twins_var_lib_t,s0)
+
+(/var)?/run/twinsd(/.*)?   gen_context(system_u:object_r:twins_var_run_t,s0)
