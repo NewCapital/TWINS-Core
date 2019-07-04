@@ -87,6 +87,7 @@ private:
     QLabel* labelStakingIcon;
     QPushButton* labelAutoMintIcon;
     QPushButton* labelEncryptionIcon;
+    QLabel *labelWalletHDStatusIcon;
     QLabel* labelTorIcon;
     QPushButton* labelConnectionsIcon;
     QLabel* labelBlocksIcon;
@@ -196,6 +197,12 @@ public slots:
     void message(const QString& title, const QString& message, unsigned int style, bool* ret = NULL);
 
 #ifdef ENABLE_WALLET
+    /** Set the hd-enabled status as shown in the UI.
+     @param[in] status            current hd enabled status
+     @see WalletModel::EncryptionStatus
+     */
+    void setHDStatus(int hdEnabled);
+
     void setStakingStatus();
     void setAutoMintStatus();
 

@@ -8,6 +8,7 @@
 #ifndef BITCOIN_KEYSTORE_H
 #define BITCOIN_KEYSTORE_H
 
+#include "hdchain.h"
 #include "key.h"
 #include "pubkey.h"
 #include "sync.h"
@@ -67,6 +68,8 @@ protected:
     ScriptMap mapScripts;
     WatchOnlySet setWatchOnly;
     MultiSigScriptSet setMultiSig;
+    /* the HD chain data model*/
+    CHDChain hdChain;
 
 public:
     bool AddKeyPubKey(const CKey& key, const CPubKey& pubkey);
@@ -87,6 +90,8 @@ public:
     virtual bool RemoveMultiSig(const CScript& dest);
     virtual bool HaveMultiSig(const CScript& dest) const;
     virtual bool HaveMultiSig() const;
+
+    bool GetHDChain(CHDChain& hdChainRet) const;
 };
 
 typedef std::vector<unsigned char, secure_allocator<unsigned char> > CKeyingMaterial;

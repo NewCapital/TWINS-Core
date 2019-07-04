@@ -13,6 +13,7 @@ JSON_TEST_FILES = \
   test/data/sig_noncanonical.json \
   test/data/base58_encode_decode.json \
   test/data/base58_keys_invalid.json \
+  test/data/bip39_vectors.json \
   test/data/script_invalid.json \
   test/data/tx_invalid.json \
   test/data/tx_valid.json \
@@ -69,6 +70,7 @@ BITCOIN_TESTS =\
   test/uint256_tests.cpp \
   test/univalue_tests.cpp \
   test/util_tests.cpp
+  # test/bip39_tests.cpp
 
 if ENABLE_WALLET
 BITCOIN_TESTS += \

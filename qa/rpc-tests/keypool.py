@@ -46,7 +46,7 @@ def run_test(nodes, tmpdir):
     nodes[0].encryptwallet('test')
     bitcoind_processes[0].wait()
     # Restart node 0
-    nodes[0] = start_node(0, tmpdir)
+    nodes[0] = start_node(0, tmpdir, ['-usehd=0'])
     # Keep creating keys
     addr = nodes[0].getnewaddress()
     try:
@@ -100,7 +100,7 @@ def main():
             os.makedirs(options.tmpdir)
         initialize_chain(options.tmpdir)
 
-        nodes = start_nodes(1, options.tmpdir)
+        nodes = start_nodes(1, options.tmpdir, [['-usehd=0']])
 
         run_test(nodes, options.tmpdir)
 

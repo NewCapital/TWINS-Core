@@ -87,6 +87,8 @@ BITCOIN_CORE_H = \
   amount.h \
   base58.h \
   bip38.h \
+  bip39.h \
+  bip39_english.h \
   bloom.h \
   blocksignature.h \
   chain.h \
@@ -114,6 +116,7 @@ BITCOIN_CORE_H = \
   obfuscation-relay.h \
   db.h \
   hash.h \
+  hdchain.h \
   httprpc.h \
   httpserver.h \
   init.h \
@@ -250,6 +253,7 @@ libbitcoin_wallet_a_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 libbitcoin_wallet_a_SOURCES = \
   activemasternode.cpp \
   bip38.cpp \
+  bip39.cpp \
   denomination_functions.cpp \
   obfuscation.cpp \
   obfuscation-relay.cpp \
@@ -349,6 +353,7 @@ libbitcoin_common_a_SOURCES = \
   amount.cpp \
   base58.cpp \
   bip38.cpp \
+  bip39.cpp \
   chainparams.cpp \
   coins.cpp \
   compressor.cpp \
@@ -359,7 +364,9 @@ libbitcoin_common_a_SOURCES = \
   core_read.cpp \
   core_write.cpp \
   hash.cpp \
+  hdchain.cpp \
   invalid.cpp \
+  hdchain.cpp \
   key.cpp \
   keystore.cpp \
   netbase.cpp \

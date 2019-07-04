@@ -10,6 +10,7 @@
 
 #include "amount.h"
 #include "db.h"
+#include "hdchain.h"
 #include "key.h"
 #include "keystore.h"
 #include "primitives/zerocoin.h"
@@ -50,7 +51,7 @@ enum DBErrors {
 class CKeyMetadata
 {
 public:
-    static const int CURRENT_VERSION = 1;
+    static const int CURRENT_VERSION=1;
     int nVersion;
     int64_t nCreateTime; // 0 means unknown
 
@@ -60,7 +61,7 @@ public:
     }
     CKeyMetadata(int64_t nCreateTime_)
     {
-        nVersion = CKeyMetadata::CURRENT_VERSION;
+        SetNull();
         nCreateTime = nCreateTime_;
     }
 
@@ -187,6 +188,10 @@ public:
     std::map<uint256, std::vector<pair<uint256, uint32_t> > > MapMintPool();
     bool WriteMintPoolPair(const uint256& hashMasterSeed, const uint256& hashPubcoin, const uint32_t& nCount);
 
+    //! write the hdchain model (external chain child index counter)
+    bool WriteHDChain(const CHDChain& chain);
+    bool WriteCryptedHDChain(const CHDChain& chain);
+    bool WriteHDPubKey(const CHDPubKey& hdPubKey, const CKeyMetadata& keyMeta);
 
 private:
     CWalletDB(const CWalletDB&);
