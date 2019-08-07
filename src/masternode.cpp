@@ -253,7 +253,7 @@ int64_t CMasternode::SecondsSincePayment()
     pubkeyScript = GetScriptForDestination(pubKeyCollateralAddress.GetID());
 
     int64_t sec = (GetAdjustedTime() - GetLastPaid());
-    int64_t month = 60 * 60 * 24 * 30;
+    int64_t month = 2592000; //60 * 60 * 24 * 30
     if (sec < month) return sec; //if it's less than 30 days, give seconds
 
     CHashWriter ss(SER_GETHASH, PROTOCOL_VERSION);
