@@ -375,6 +375,13 @@ UniValue dumphdinfo(const UniValue& params, bool fHelp)
             "  \"hdseed\": \"seed\",                    (string) The HD seed (bip32, in hex)\n"
             "  \"mnemonic\": \"words\",                 (string) The mnemonic for this HD wallet (bip39, english words) \n"
             "  \"mnemonicpassphrase\": \"passphrase\",  (string) The mnemonic passphrase for this HD wallet (bip39)\n"
+            "    \"hdaccounts\": [\n"
+            "      {\n"
+            "      \"hdaccountindex\": xxx,         (numeric) the index of the account\n"
+            "      \"extpubkey\": xxxx,    (string) Account Extended Public Key\n"
+            "      }\n"
+            "      ,...\n"
+            "    ]\n"
             "}\n"
             "\nExamples:\n"
             + HelpExampleCli("dumphdinfo", "")
@@ -401,6 +408,32 @@ UniValue dumphdinfo(const UniValue& params, bool fHelp)
         obj.push_back(Pair("mnemonic", ssMnemonic.c_str()));
         obj.push_back(Pair("mnemonicpassphrase", ssMnemonicPassphrase.c_str()));
 
+        SecureVector vchSeed = hdChainCurrent.GetSeed();
+        CExtKey masterKey;
+        CExtKey purposeKey;             //key at m/purpose'
+        CExtKey cointypeKey;            //key at m/purpose'/coin_type'
+
+        masterKey.SetMaster(&vchSeed[0], vchSeed.size());
+        masterKey.Derive(purposeKey, 44 | 0x80000000);
+        purposeKey.Derive(cointypeKey, Params().ExtCoinType() | 0x80000000);
+
+        UniValue accounts(UniValue::VARR);
+        for (int i = 0; i < hdChainCurrent.CountAccounts(); ++i)
+        {
+          CExtKey accountKey;             //key at m/purpose'/coin_type'/account'
+          cointypeKey.Derive(accountKey, i | 0x80000000);
+
+          CExtPubKey extpubkey;
+          extpubkey = accountKey.Neuter();
+          CBitcoinExtPubKey b58extpubkey;
+          b58extpubkey.SetKey(extpubkey);
+
+          UniValue account(UniValue::VOBJ);
+          account.push_back(Pair("hdaccountindex", (int64_t)i));
+          account.push_back(Pair("extpubkey", b58extpubkey.ToString().c_str()));
+          accounts.push_back(account);
+        }
+        obj.push_back(Pair("hdaccounts", accounts));
         return obj;
     }
 
