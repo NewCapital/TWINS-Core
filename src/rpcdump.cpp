@@ -418,7 +418,7 @@ UniValue dumphdinfo(const UniValue& params, bool fHelp)
         purposeKey.Derive(cointypeKey, Params().ExtCoinType() | 0x80000000);
 
         UniValue accounts(UniValue::VARR);
-        for (int i = 0; i < hdChainCurrent.CountAccounts(); ++i)
+        for (size_t i = 0; i < hdChainCurrent.CountAccounts(); ++i)
         {
           CExtKey accountKey;             //key at m/purpose'/coin_type'/account'
           cointypeKey.Derive(accountKey, i | 0x80000000);
