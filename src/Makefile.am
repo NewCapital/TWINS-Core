@@ -366,7 +366,6 @@ libbitcoin_common_a_SOURCES = \
   hash.cpp \
   hdchain.cpp \
   invalid.cpp \
-  hdchain.cpp \
   key.cpp \
   keystore.cpp \
   netbase.cpp \

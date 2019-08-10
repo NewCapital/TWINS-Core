@@ -122,7 +122,7 @@ UniValue getinfo(const UniValue& params, bool fHelp)
 #ifdef ENABLE_WALLET
     if (pwalletMain) {
         obj.push_back(Pair("keypoololdest", pwalletMain->GetOldestKeyPoolTime()));
-        obj.push_back(Pair("keypoolsize", (int)pwalletMain->GetKeyPoolSize()));
+        obj.push_back(Pair("keypoolsize", (int64_t)pwalletMain->KeypoolCountExternalKeys()));
     }
     if (pwalletMain && pwalletMain->IsCrypted())
         obj.push_back(Pair("unlocked_until", nWalletUnlockTime));
