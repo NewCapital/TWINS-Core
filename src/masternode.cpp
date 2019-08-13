@@ -95,6 +95,8 @@ CMasternode::CMasternode()
     nScanningErrorCount = 0;
     nLastScanningErrorBlockHeight = 0;
     lastTimeChecked = 0;
+    wins = 0;
+    lastSigTime = GetAdjustedTime();
 }
 
 CMasternode::CMasternode(const CMasternode& other)
@@ -118,6 +120,8 @@ CMasternode::CMasternode(const CMasternode& other)
     nScanningErrorCount = other.nScanningErrorCount;
     nLastScanningErrorBlockHeight = other.nLastScanningErrorBlockHeight;
     lastTimeChecked = 0;
+    wins = other.wins;
+    lastSigTime = other.lastSigTime;
 }
 
 CMasternode::CMasternode(const CMasternodeBroadcast& mnb)
@@ -141,6 +145,8 @@ CMasternode::CMasternode(const CMasternodeBroadcast& mnb)
     nScanningErrorCount = 0;
     nLastScanningErrorBlockHeight = 0;
     lastTimeChecked = 0;
+    wins = mnb.wins;
+    lastSigTime = mnb.lastSigTime;
 }
 
 //
@@ -149,6 +155,28 @@ CMasternode::CMasternode(const CMasternodeBroadcast& mnb)
 bool CMasternode::UpdateFromNewBroadcast(CMasternodeBroadcast& mnb)
 {
     if (mnb.sigTime > sigTime) {
+		int tier = GetMasternodeTierRounds(vin);
+		switch (tier)
+		{
+		    case 5:
+			    tier = 9;
+				break;
+			case 20:
+				tier = 36;
+				break;
+			case 100:
+				tier = 990;
+				break;
+			default:
+				tier = 1;
+		}
+		// timer is updated after a certain amount of wins is achieved so that the multi-tier masternodes remain in the top 10% of masternodes
+		// and received rewards. This maintains the correct ratios between masternode reward frequency
+		if (++wins % tier == 0)
+		{
+			wins = 0;
+			lastSigTime = mnb.sigTime;
+		}
         pubKeyMasternode = mnb.pubKeyMasternode;
         pubKeyCollateralAddress = mnb.pubKeyCollateralAddress;
         sigTime = mnb.sigTime;
@@ -184,6 +212,20 @@ uint256 CMasternode::CalculateScore(int mod, int64_t nBlockHeight)
     }
 
     int nRounds = GetMasternodeTierRounds(vin);
+	
+	// tier-20 and tier-100 are given a higher probability of becomming winners so that the 1:20 and 1:100 ratio
+	// could be maintained between them and tier-1 masternodes
+	switch (nRounds)
+	{
+		case 20: 	
+			nRounds = 4;
+			break;
+		case 100: 	
+			nRounds = 11;
+			break;
+		default:	
+			nRounds = 1;
+	}
 
     uint256 r;
 
@@ -253,12 +295,19 @@ int64_t CMasternode::SecondsSincePayment()
     pubkeyScript = GetScriptForDestination(pubKeyCollateralAddress.GetID());
 
     int64_t sec = (GetAdjustedTime() - GetLastPaid());
-    int64_t month = 60 * 60 * 24 * 30;
+    int64_t month = 2592000‬; //60 * 60 * 24 * 30
     if (sec < month) return sec; //if it's less than 30 days, give seconds
 
     CHashWriter ss(SER_GETHASH, PROTOCOL_VERSION);
     ss << vin;
-    ss << sigTime;
+	if (GetMasternodeTierRounds(vin) == 1)
+	{	
+		ss << sigTime;
+	}
+	else
+	{
+		ss << lastSigTime;
+	}
     uint256 hash = ss.GetHash();
 
     // return some deterministic value for unknown/unpaid but force it to be more than 30 days old
@@ -272,10 +321,18 @@ int64_t CMasternode::GetLastPaid()
 
     CScript mnpayee;
     mnpayee = GetScriptForDestination(pubKeyCollateralAddress.GetID());
-
+	
     CHashWriter ss(SER_GETHASH, PROTOCOL_VERSION);
-    ss << vin;
-    ss << sigTime;
+	ss << vin;
+	
+	if (GetMasternodeTierRounds(vin) == 1)
+	{	
+		ss << sigTime;
+	}
+	else
+	{
+		ss << lastSigTime;
+	}
     uint256 hash = ss.GetHash();
 
     // use a deterministic offset to break a tie -- 2.5 minutes
@@ -796,7 +853,7 @@ bool CMasternodePing::CheckAndUpdate(int& nDos, bool fRequireEnabled, bool fChec
 
         // LogPrint("masternode","mnping - Found corresponding mn for vin: %s\n", vin.ToString());
         // update only if there is no known ping for this masternode or
-        // last ping was more then MASTERNODE_MIN_MNP_SECONDS-60 ago comparing to this one
+        // last ping was more than MASTERNODE_MIN_MNP_SECONDS-60 ago comparing to this one
         if (!pmn->IsPingedWithin(MASTERNODE_MIN_MNP_SECONDS - 60, sigTime)) {
         	if (!VerifySignature(pmn->pubKeyMasternode, nDos))
                 return false;

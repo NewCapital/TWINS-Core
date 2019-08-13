@@ -494,10 +494,12 @@ CMasternode* CMasternodeMan::GetNextMasternodeInQueueForPayment(int nBlockHeight
         if (mn.protocolVersion < masternodePayments.GetMinMasternodePaymentsProto()) continue;
 
         //it's in the list (up to 8 entries ahead of current block to allow propagation) -- so let's skip it
-        if (masternodePayments.IsScheduled(mn, nBlockHeight)) continue;
+        // Don't check multi-tier masternodes. They can be scheduled to be paid multiple times
+        if (masternodePayments.IsScheduled(mn, nBlockHeight) && GetMasternodeTierRounds(mn.vin) == 1) continue;
 
         //it's too new, wait for a cycle
-        if (fFilterSigTime && mn.sigTime + (nMnCount * 2.6 * 60) > GetAdjustedTime()) continue;
+        // Don't check multi-tier masternodes. They are rewarded several times before being moved to the tail of the masternode queue
+        if (fFilterSigTime && mn.sigTime + (nMnCount * 2.6 * 60) > GetAdjustedTime() && GetMasternodeTierRounds(mn.vin) == 1) continue;
 
         //make sure it has as many confirmations as there are masternodes
         if (mn.GetMasternodeInputAge() < nMnCount) continue;
