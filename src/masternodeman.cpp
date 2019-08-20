@@ -498,8 +498,7 @@ CMasternode* CMasternodeMan::GetNextMasternodeInQueueForPayment(int nBlockHeight
         if (masternodePayments.IsScheduled(mn, nBlockHeight) && GetMasternodeTierRounds(mn.vin) == 1) continue;
 
         //it's too new, wait for a cycle
-        // Don't check multi-tier masternodes. They are rewarded several times before being moved to the tail of the masternode queue
-        if (fFilterSigTime && mn.sigTime + (nMnCount * 2.6 * 60) > GetAdjustedTime() && GetMasternodeTierRounds(mn.vin) == 1) continue;
+        if (fFilterSigTime && mn.sigTime + (nMnCount * 2.6 * 60) > GetAdjustedTime()) continue;
 
         //make sure it has as many confirmations as there are masternodes
         if (mn.GetMasternodeInputAge() < nMnCount) continue;

@@ -96,7 +96,7 @@ CMasternode::CMasternode()
     nLastScanningErrorBlockHeight = 0;
     lastTimeChecked = 0;
     wins = 0;
-    lastSigTime = GetAdjustedTime();
+    cyclePaidTime = GetAdjustedTime();
 }
 
 CMasternode::CMasternode(const CMasternode& other)
@@ -121,7 +121,7 @@ CMasternode::CMasternode(const CMasternode& other)
     nLastScanningErrorBlockHeight = other.nLastScanningErrorBlockHeight;
     lastTimeChecked = 0;
     wins = other.wins;
-    lastSigTime = other.lastSigTime;
+    cyclePaidTime = other.cyclePaidTime;
 }
 
 CMasternode::CMasternode(const CMasternodeBroadcast& mnb)
@@ -146,7 +146,7 @@ CMasternode::CMasternode(const CMasternodeBroadcast& mnb)
     nLastScanningErrorBlockHeight = 0;
     lastTimeChecked = 0;
     wins = mnb.wins;
-    lastSigTime = mnb.lastSigTime;
+    cyclePaidTime = mnb.cyclePaidTime;
 }
 
 //
@@ -155,28 +155,6 @@ CMasternode::CMasternode(const CMasternodeBroadcast& mnb)
 bool CMasternode::UpdateFromNewBroadcast(CMasternodeBroadcast& mnb)
 {
     if (mnb.sigTime > sigTime) {
-		int tier = GetMasternodeTierRounds(vin);
-		switch (tier)
-		{
-		    case 5:
-			    tier = 9;
-				break;
-			case 20:
-				tier = 36;
-				break;
-			case 100:
-				tier = 990;
-				break;
-			default:
-				tier = 1;
-		}
-		// timer is updated after a certain amount of wins is achieved so that the multi-tier masternodes remain in the top 10% of masternodes
-		// and received rewards. This maintains the correct ratios between masternode reward frequency
-		if (++wins % tier == 0)
-		{
-			wins = 0;
-			lastSigTime = mnb.sigTime;
-		}
         pubKeyMasternode = mnb.pubKeyMasternode;
         pubKeyCollateralAddress = mnb.pubKeyCollateralAddress;
         sigTime = mnb.sigTime;
@@ -192,6 +170,32 @@ bool CMasternode::UpdateFromNewBroadcast(CMasternodeBroadcast& mnb)
         return true;
     }
     return false;
+}
+
+void CMasternode::AddWin()
+{
+    if (++wins % getCycleWins() == 0)
+    {
+        wins = 0;
+        cyclePaidTime = GetAdjustedTime();
+    }	
+}
+
+int CMasternode::getCycleWins()
+{
+    int tiers = GetMasternodeTierRounds(vin);
+    switch (tiers)
+    {
+        case 5:
+            return 9;
+        case 20:
+            return 36;
+        case 100:
+            return 990;
+        default:
+            return 1;
+    }
+    return 1;
 }
 
 //
@@ -293,21 +297,13 @@ int64_t CMasternode::SecondsSincePayment()
 {
     CScript pubkeyScript;
     pubkeyScript = GetScriptForDestination(pubKeyCollateralAddress.GetID());
-
     int64_t sec = (GetAdjustedTime() - GetLastPaid());
     int64_t month = 2592000‬; //60 * 60 * 24 * 30
     if (sec < month) return sec; //if it's less than 30 days, give seconds
 
     CHashWriter ss(SER_GETHASH, PROTOCOL_VERSION);
     ss << vin;
-	if (GetMasternodeTierRounds(vin) == 1)
-	{	
-		ss << sigTime;
-	}
-	else
-	{
-		ss << lastSigTime;
-	}
+    ss << sigTime;
     uint256 hash = ss.GetHash();
 
     // return some deterministic value for unknown/unpaid but force it to be more than 30 days old
@@ -316,6 +312,11 @@ int64_t CMasternode::SecondsSincePayment()
 
 int64_t CMasternode::GetLastPaid()
 {
+    if (wins != 0)
+    {
+        return cyclePaidTime;
+    }
+	
     CBlockIndex* pindexPrev = chainActive.Tip();
     if (pindexPrev == NULL) return false;
 
@@ -323,16 +324,8 @@ int64_t CMasternode::GetLastPaid()
     mnpayee = GetScriptForDestination(pubKeyCollateralAddress.GetID());
 	
     CHashWriter ss(SER_GETHASH, PROTOCOL_VERSION);
-	ss << vin;
-	
-	if (GetMasternodeTierRounds(vin) == 1)
-	{	
-		ss << sigTime;
-	}
-	else
-	{
-		ss << lastSigTime;
-	}
+    ss << vin;
+    ss << sigTime;
     uint256 hash = ss.GetHash();
 
     // use a deterministic offset to break a tie -- 2.5 minutes

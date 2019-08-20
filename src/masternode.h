@@ -31,7 +31,7 @@ class CMasternodePing;
 extern map<int64_t, uint256> mapCacheBlockHashes;
 
 bool GetBlockHash(uint256& hash, int nBlockHeight);
-static int GetMasternodeTierRounds(CTxIn vin)
+static int GetMasternodeTierRounds(CTxIn vin);
 
 //
 // The Masternode Ping Class : Contains a different serialize method for sending pings from masternodes throughout the network
@@ -144,8 +144,8 @@ public:
     int nScanningErrorCount;
     int nLastScanningErrorBlockHeight;
     CMasternodePing lastPing;
-    int wins;
-    int64_t lastSigTime;
+    int wins; // wins in the current cycle
+    int64_t cyclePaidTime; // last paid time of the previous payment cycle
 	
     CMasternode();
     CMasternode(const CMasternode& other);
@@ -175,6 +175,8 @@ public:
         swap(first.nLastDsq, second.nLastDsq);
         swap(first.nScanningErrorCount, second.nScanningErrorCount);
         swap(first.nLastScanningErrorBlockHeight, second.nLastScanningErrorBlockHeight);
+        swap(first.wins, second.wins);
+        swap(first.cyclePaidTime, second.cyclePaidTime);
     }
 
     CMasternode& operator=(CMasternode from)
@@ -192,6 +194,12 @@ public:
     }
 
     uint256 CalculateScore(int mod = 1, int64_t nBlockHeight = 0);
+	
+    // adds a win to a masternode
+    void AddWin();
+	
+    // returns maximum payment cycle wins
+    int getCycleWins();
 
     ADD_SERIALIZE_METHODS;
 
@@ -247,6 +255,8 @@ public:
     {
         sigTime = 0;
         lastPing = CMasternodePing();
+        wins = 0;
+        cyclePaidTime = 0;
     }
 
     bool IsEnabled()
