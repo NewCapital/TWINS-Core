@@ -17,7 +17,7 @@ map<uint256, int> mapSeenMasternodeScanningErrors;
 // cache block hashes as we calculate them
 std::map<int64_t, uint256> mapCacheBlockHashes;
 
-static int GetMasternodeTierRounds(CTxIn vin)
+int GetMasternodeTierRounds(CTxIn vin)
 {
     LOCK(cs_main);
     CCoinsViewCache cache(pcoinsTip);
@@ -172,7 +172,7 @@ bool CMasternode::UpdateFromNewBroadcast(CMasternodeBroadcast& mnb)
     return false;
 }
 
-void CMasternode::AddWin()
+void CMasternode::addWin()
 {
     if (++wins % getCycleWins() == 0)
     {
@@ -298,7 +298,7 @@ int64_t CMasternode::SecondsSincePayment()
     CScript pubkeyScript;
     pubkeyScript = GetScriptForDestination(pubKeyCollateralAddress.GetID());
     int64_t sec = (GetAdjustedTime() - GetLastPaid());
-    int64_t month = 2592000‬; //60 * 60 * 24 * 30
+    int64_t month = 2592000; //60 * 60 * 24 * 30
     if (sec < month) return sec; //if it's less than 30 days, give seconds
 
     CHashWriter ss(SER_GETHASH, PROTOCOL_VERSION);

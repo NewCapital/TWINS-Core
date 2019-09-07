@@ -31,7 +31,7 @@ class CMasternodePing;
 extern map<int64_t, uint256> mapCacheBlockHashes;
 
 bool GetBlockHash(uint256& hash, int nBlockHeight);
-static int GetMasternodeTierRounds(CTxIn vin);
+int GetMasternodeTierRounds(CTxIn vin);
 
 //
 // The Masternode Ping Class : Contains a different serialize method for sending pings from masternodes throughout the network
@@ -196,7 +196,7 @@ public:
     uint256 CalculateScore(int mod = 1, int64_t nBlockHeight = 0);
 	
     // adds a win to a masternode
-    void AddWin();
+    void addWin();
 	
     // returns maximum payment cycle wins
     int getCycleWins();
