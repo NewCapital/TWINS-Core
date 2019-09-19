@@ -174,28 +174,11 @@ bool CMasternode::UpdateFromNewBroadcast(CMasternodeBroadcast& mnb)
 
 void CMasternode::addWin()
 {
-    if (++wins % getCycleWins() == 0)
+    if (++wins % GetMasternodeTierRounds(vin) == 0)
     {
         wins = 0;
         cyclePaidTime = GetAdjustedTime();
     }	
-}
-
-int CMasternode::getCycleWins()
-{
-    int tiers = GetMasternodeTierRounds(vin);
-    switch (tiers)
-    {
-        case 5:
-            return 9;
-        case 20:
-            return 36;
-        case 100:
-            return 990;
-        default:
-            return 1;
-    }
-    return 1;
 }
 
 //
@@ -216,21 +199,6 @@ uint256 CMasternode::CalculateScore(int mod, int64_t nBlockHeight)
     }
 
     int nRounds = GetMasternodeTierRounds(vin);
-	
-	// tier-20 and tier-100 are given a higher probability of becomming winners so that the 1:20 and 1:100 ratio
-	// could be maintained between them and tier-1 masternodes
-	switch (nRounds)
-	{
-		case 20: 	
-			nRounds = 4;
-			break;
-		case 100: 	
-			nRounds = 11;
-			break;
-		default:	
-			nRounds = 1;
-	}
-
     uint256 r;
 
     CHashWriter ss(SER_GETHASH, PROTOCOL_VERSION);

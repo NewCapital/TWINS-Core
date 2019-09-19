@@ -198,9 +198,7 @@ public:
     // adds a win to a masternode
     void addWin();
 	
-    // returns maximum payment cycle wins
-    int getCycleWins();
-
+	
     ADD_SERIALIZE_METHODS;
 
     template <typename Stream, typename Operation>
