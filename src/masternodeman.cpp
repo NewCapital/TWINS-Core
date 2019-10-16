@@ -389,6 +389,20 @@ int CMasternodeMan::CountEnabled(int protocolVersion)
     return i;
 }
 
+int CMasternodeMan::CountMillionsLocked(int protocolVersion)
+{
+    int i = 0;
+    protocolVersion = protocolVersion == -1 ? masternodePayments.GetMinMasternodePaymentsProto() : protocolVersion;
+
+    BOOST_FOREACH (CMasternode& mn, vMasternodes) {
+        mn.Check();
+        if (mn.protocolVersion < protocolVersion || !mn.IsEnabled()) continue;
+        i += GetMasternodeTierRounds(mn.vin);
+    }
+
+    return i;
+}
+
 void CMasternodeMan::CountNetworks(int protocolVersion, int& ipv4, int& ipv6, int& onion)
 {
     protocolVersion = protocolVersion == -1 ? masternodePayments.GetMinMasternodePaymentsProto() : protocolVersion;
@@ -486,6 +500,8 @@ CMasternode* CMasternodeMan::GetNextMasternodeInQueueForPayment(int nBlockHeight
     */
 
     int nMnCount = CountEnabled();
+	int millionsLocked = CountMillionsLocked();
+	
     BOOST_FOREACH (CMasternode& mn, vMasternodes) {
         mn.Check();
         if (!mn.IsEnabled()) continue;
@@ -498,10 +514,13 @@ CMasternode* CMasternodeMan::GetNextMasternodeInQueueForPayment(int nBlockHeight
         if (masternodePayments.IsScheduled(mn, nBlockHeight) && GetMasternodeTierRounds(mn.vin) == 1) continue;
 
         //it's too new, wait for a cycle
-        if (fFilterSigTime && mn.sigTime + (nMnCount * 2.6 * 60) > GetAdjustedTime()) continue;
+        if (fFilterSigTime && mn.sigTime + (millionsLocked * 2.6 * 60) > GetAdjustedTime()) continue;
 
         //make sure it has as many confirmations as there are masternodes
-        if (mn.GetMasternodeInputAge() < nMnCount) continue;
+        if (mn.GetMasternodeInputAge() < millionsLocked) continue;
+		
+        // Doesn't let tier-1 masternodes win two consecutive blocks (blocks double payments)
+        if (GetMasternodeTierRounds(mn.vin) == 1 && mn.cyclePaidBlock + 1 >= chainActive.Tip()->nHeight) continue;
 
         vecMasternodeLastPaid.push_back(make_pair(mn.SecondsSincePayment(), mn.vin));
     }

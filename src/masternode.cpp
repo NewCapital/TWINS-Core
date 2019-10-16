@@ -96,7 +96,7 @@ CMasternode::CMasternode()
     nLastScanningErrorBlockHeight = 0;
     lastTimeChecked = 0;
     wins = 0;
-    cyclePaidTime = GetAdjustedTime();
+    cyclePaidBlock = chainActive.Tip()->nHeight;
 }
 
 CMasternode::CMasternode(const CMasternode& other)
@@ -121,7 +121,7 @@ CMasternode::CMasternode(const CMasternode& other)
     nLastScanningErrorBlockHeight = other.nLastScanningErrorBlockHeight;
     lastTimeChecked = 0;
     wins = other.wins;
-    cyclePaidTime = other.cyclePaidTime;
+    cyclePaidBlock = other.cyclePaidBlock;
 }
 
 CMasternode::CMasternode(const CMasternodeBroadcast& mnb)
@@ -146,7 +146,7 @@ CMasternode::CMasternode(const CMasternodeBroadcast& mnb)
     nLastScanningErrorBlockHeight = 0;
     lastTimeChecked = 0;
     wins = mnb.wins;
-    cyclePaidTime = mnb.cyclePaidTime;
+    cyclePaidBlock = mnb.cyclePaidBlock;
 }
 
 //
@@ -177,7 +177,7 @@ void CMasternode::addWin()
     if (++wins % GetMasternodeTierRounds(vin) == 0)
     {
         wins = 0;
-        cyclePaidTime = GetAdjustedTime();
+        cyclePaidBlock = chainActive.Tip()->nHeight;
     }	
 }
 
@@ -279,12 +279,7 @@ int64_t CMasternode::SecondsSincePayment()
 }
 
 int64_t CMasternode::GetLastPaid()
-{
-    if (wins != 0)
-    {
-        return cyclePaidTime;
-    }
-	
+{	
     CBlockIndex* pindexPrev = chainActive.Tip();
     if (pindexPrev == NULL) return false;
 
@@ -317,7 +312,19 @@ int64_t CMasternode::GetLastPaid()
                 to converge on the same payees quickly, then keep the same schedule.
             */
             if (masternodePayments.mapMasternodeBlocks[BlockReading->nHeight].HasPayeeWithVotes(mnpayee, 2)) {
-                return BlockReading->nTime + nOffset;
+                if (wins != 0)
+                {
+                    while (BlockReading->nHeight != cyclePaidBlock)
+                    {
+                        if (BlockReading->pprev == NULL) {
+                            assert(BlockReading);
+                            break;
+                        }
+                        BlockReading = BlockReading->pprev;
+                    }
+                }
+                else
+                    return BlockReading->nTime + nOffset;
             }
         }
 
