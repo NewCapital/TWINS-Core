@@ -519,8 +519,13 @@ CMasternode* CMasternodeMan::GetNextMasternodeInQueueForPayment(int nBlockHeight
         //make sure it has as many confirmations as there are masternodes
         if (mn.GetMasternodeInputAge() < millionsLocked) continue;
 		
-        // Doesn't let tier-1 masternodes win two consecutive blocks (blocks double payments)
-        if (GetMasternodeTierRounds(mn.vin) == 1 && mn.cyclePaidBlock + 1 >= chainActive.Tip()->nHeight) continue;
+        // Prevents masternodes from winning more than their tier number of times per cycle
+        if (GetMasternodeTierRounds(mn.vin) <= masternodePayments.CountCycleWins(mn))
+		{
+			mn.wins = 0;
+			mn.cyclePaidBlock = nBlockHeight;
+			continue;
+		}
 
         vecMasternodeLastPaid.push_back(make_pair(mn.SecondsSincePayment(), mn.vin));
     }

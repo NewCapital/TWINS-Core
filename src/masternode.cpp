@@ -298,7 +298,7 @@ int64_t CMasternode::GetLastPaid()
 
     const CBlockIndex* BlockReading = chainActive.Tip();
 
-    int nMnCount = mnodeman.CountEnabled() * 1.25;
+    int nMnCount = mnodeman.CountMillionsLocked() * 1.25;
     int n = 0;
     for (unsigned int i = 1; BlockReading && BlockReading->nHeight > 0; i++) {
         if (n >= nMnCount) {
@@ -323,8 +323,7 @@ int64_t CMasternode::GetLastPaid()
                         BlockReading = BlockReading->pprev;
                     }
                 }
-                else
-                    return BlockReading->nTime + nOffset;
+                return BlockReading->nTime + nOffset;
             }
         }
 

@@ -542,6 +542,35 @@ bool CMasternodePayments::IsScheduled(CMasternode& mn, int nNotBlockHeight)
     return false;
 }
 
+
+int CMasternodePayments::CountCycleWins(CMasternode& mn)
+{
+	int count = 0;
+	LOCK(cs_mapMasternodeBlocks);
+	
+    int nHeight;
+    {
+        TRY_LOCK(cs_main, locked);
+        if (!locked || chainActive.Tip() == NULL) return false;
+        nHeight = chainActive.Tip()->nHeight;
+    }
+	
+	CScript mnpayee;
+    mnpayee = GetScriptForDestination(mn.pubKeyCollateralAddress.GetID());
+	
+	CScript payee;
+    for (int64_t h = mn.cyclePaidBlock; h < nHeight + 9; h++) {
+        if (mapMasternodeBlocks.count(h)) {
+            if (mapMasternodeBlocks[h].GetPayee(payee)) {
+                if (mnpayee == payee) {
+                    count++;
+                }
+            }
+        }
+    }
+	return count;
+}
+
 bool CMasternodePayments::AddWinningMasternode(CMasternodePaymentWinner& winnerIn)
 {
     uint256 blockHash = 0;
