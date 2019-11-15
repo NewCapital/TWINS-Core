@@ -96,7 +96,8 @@ CMasternode::CMasternode()
     nLastScanningErrorBlockHeight = 0;
     lastTimeChecked = 0;
     wins = 0;
-    cyclePaidBlock = chainActive.Tip()->nHeight;
+    currCycleFirstBlock = chainActive.Height();
+    prevCycleFirstBlock = chainActive.Height();
 }
 
 CMasternode::CMasternode(const CMasternode& other)
@@ -121,7 +122,8 @@ CMasternode::CMasternode(const CMasternode& other)
     nLastScanningErrorBlockHeight = other.nLastScanningErrorBlockHeight;
     lastTimeChecked = 0;
     wins = other.wins;
-    cyclePaidBlock = other.cyclePaidBlock;
+    currCycleFirstBlock = other.currCycleFirstBlock;
+    prevCycleFirstBlock = other.prevCycleFirstBlock;
 }
 
 CMasternode::CMasternode(const CMasternodeBroadcast& mnb)
@@ -146,7 +148,8 @@ CMasternode::CMasternode(const CMasternodeBroadcast& mnb)
     nLastScanningErrorBlockHeight = 0;
     lastTimeChecked = 0;
     wins = mnb.wins;
-    cyclePaidBlock = mnb.cyclePaidBlock;
+    currCycleFirstBlock = mnb.currCycleFirstBlock;
+    prevCycleFirstBlock = mnb.prevCycleFirstBlock;
 }
 
 //
@@ -172,12 +175,15 @@ bool CMasternode::UpdateFromNewBroadcast(CMasternodeBroadcast& mnb)
     return false;
 }
 
-void CMasternode::addWin()
+void CMasternode::addWin(int blockHeight)
 {
-    if (++wins % GetMasternodeTierRounds(vin) == 0)
+    int tier = GetMasternodeTierRounds(vin);
+    if (currCycleFirstBlock == prevCycleFirstBlock)
+        currCycleFirstBlock = blockHeight;
+    if (++wins >= tier)
     {
-        wins = 0;
-        cyclePaidBlock = chainActive.Tip()->nHeight;
+        wins = wins - tier;
+        prevCycleFirstBlock = currCycleFirstBlock;
     }	
 }
 
@@ -314,7 +320,7 @@ int64_t CMasternode::GetLastPaid()
             if (masternodePayments.mapMasternodeBlocks[BlockReading->nHeight].HasPayeeWithVotes(mnpayee, 2)) {
                 if (wins != 0)
                 {
-                    while (BlockReading->nHeight != cyclePaidBlock)
+                    while (BlockReading->nHeight != prevCycleFirstBlock)
                     {
                         if (BlockReading->pprev == NULL) {
                             assert(BlockReading);

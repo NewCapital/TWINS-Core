@@ -512,7 +512,6 @@ bool CMasternodePayments::GetBlockPayee(int nBlockHeight, CScript& payee)
 }
 
 // Is this masternode scheduled to get paid soon?
-// -- Only look ahead up to 8 blocks to allow for propagation of the latest 2 winners
 bool CMasternodePayments::IsScheduled(CMasternode& mn, int nNotBlockHeight)
 {
     LOCK(cs_mapMasternodeBlocks);
@@ -528,7 +527,7 @@ bool CMasternodePayments::IsScheduled(CMasternode& mn, int nNotBlockHeight)
     mnpayee = GetScriptForDestination(mn.pubKeyCollateralAddress.GetID());
 
     CScript payee;
-    for (int64_t h = nHeight; h <= nHeight + 8; h++) {
+    for (int64_t h = nHeight; h <= GetNewestBlock(); h++) {
         if (h == nNotBlockHeight) continue;
         if (mapMasternodeBlocks.count(h)) {
             if (mapMasternodeBlocks[h].GetPayee(payee)) {
@@ -559,7 +558,7 @@ int CMasternodePayments::CountCycleWins(CMasternode& mn)
     mnpayee = GetScriptForDestination(mn.pubKeyCollateralAddress.GetID());
 	
 	CScript payee;
-    for (int64_t h = mn.cyclePaidBlock; h < nHeight + 9; h++) {
+    for (int64_t h = mn.currCycleFirstBlock; h <= GetNewestBlock(); h++) {
         if (mapMasternodeBlocks.count(h)) {
             if (mapMasternodeBlocks[h].GetPayee(payee)) {
                 if (mnpayee == payee) {
@@ -831,7 +830,7 @@ bool CMasternodePayments::ProcessBlock(int nBlockHeight)
         if (AddWinningMasternode(newWinner)) {
             newWinner.Relay();
             nLastBlockHeight = nBlockHeight;
-            if (pmn) pmn->addWin();
+            if (pmn) pmn->addWin(nBlockHeight);
             return true;
         }
     }

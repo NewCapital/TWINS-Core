@@ -145,7 +145,8 @@ public:
     int nLastScanningErrorBlockHeight;
     CMasternodePing lastPing;
     int wins; // wins in the current cycle
-    int cyclePaidBlock; // last paid block of the previous payment cycle
+    int prevCycleFirstBlock; // first paid block of the current payment cycle
+    int currCycleFirstBlock; // first paid block of the previous payment cycle
 	
     CMasternode();
     CMasternode(const CMasternode& other);
@@ -176,7 +177,8 @@ public:
         swap(first.nScanningErrorCount, second.nScanningErrorCount);
         swap(first.nLastScanningErrorBlockHeight, second.nLastScanningErrorBlockHeight);
         swap(first.wins, second.wins);
-        swap(first.cyclePaidBlock, second.cyclePaidBlock);
+        swap(first.prevCycleFirstBlock, second.prevCycleFirstBlock);
+        swap(first.currCycleFirstBlock, second.currCycleFirstBlock);
     }
 
     CMasternode& operator=(CMasternode from)
@@ -196,7 +198,7 @@ public:
     uint256 CalculateScore(int mod = 1, int64_t nBlockHeight = 0);
 	
     // adds a win to a masternode
-    void addWin();
+    void addWin(int blockHeight);
 	
 	
     ADD_SERIALIZE_METHODS;
@@ -254,7 +256,8 @@ public:
         sigTime = 0;
         lastPing = CMasternodePing();
         wins = 0;
-        cyclePaidBlock = 0;
+        currCycleFirstBlock = 0;
+        prevCycleFirstBlock = 0;
     }
 
     bool IsEnabled()
