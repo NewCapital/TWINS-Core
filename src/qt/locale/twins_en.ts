@@ -3423,7 +3423,7 @@ To change the percentage (no restart required):
     </message>
     <message>
         <location line="-1324"/>
-        <source>Show zPIV denominations list</source>
+        <source>Show zTWINS denominations list</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
