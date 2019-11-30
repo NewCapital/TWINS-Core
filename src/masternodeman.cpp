@@ -389,6 +389,20 @@ int CMasternodeMan::CountEnabled(int protocolVersion)
     return i;
 }
 
+int CMasternodeMan::CountMillionsLocked(int protocolVersion)
+{
+    int i = 0;
+    protocolVersion = protocolVersion == -1 ? masternodePayments.GetMinMasternodePaymentsProto() : protocolVersion;
+
+    BOOST_FOREACH (CMasternode& mn, vMasternodes) {
+        mn.Check();
+        if (mn.protocolVersion < protocolVersion || !mn.IsEnabled()) continue;
+        i += GetMasternodeTierRounds(mn.vin);
+    }
+
+    return i;
+}
+
 void CMasternodeMan::CountNetworks(int protocolVersion, int& ipv4, int& ipv6, int& onion)
 {
     protocolVersion = protocolVersion == -1 ? masternodePayments.GetMinMasternodePaymentsProto() : protocolVersion;
@@ -477,6 +491,7 @@ CMasternode* CMasternodeMan::Find(const CPubKey& pubKeyMasternode)
 CMasternode* CMasternodeMan::GetNextMasternodeInQueueForPayment(int nBlockHeight, bool fFilterSigTime, int& nCount)
 {
     LOCK(cs);
+    int tiers, collectedWins;
 
     CMasternode* pBestMasternode = NULL;
     std::vector<pair<int64_t, CTxIn> > vecMasternodeLastPaid;
@@ -486,6 +501,8 @@ CMasternode* CMasternodeMan::GetNextMasternodeInQueueForPayment(int nBlockHeight
     */
 
     int nMnCount = CountEnabled();
+    int millionsLocked = CountMillionsLocked();
+	
     BOOST_FOREACH (CMasternode& mn, vMasternodes) {
         mn.Check();
         if (!mn.IsEnabled()) continue;
@@ -493,14 +510,30 @@ CMasternode* CMasternodeMan::GetNextMasternodeInQueueForPayment(int nBlockHeight
         // //check protocol version
         if (mn.protocolVersion < masternodePayments.GetMinMasternodePaymentsProto()) continue;
 
-        //it's in the list (up to 8 entries ahead of current block to allow propagation) -- so let's skip it
-        if (masternodePayments.IsScheduled(mn, nBlockHeight)) continue;
+        //it's in the list -- so let's skip it
+        // Don't check multi-tier masternodes. They can be scheduled to be paid multiple times
+        if (masternodePayments.IsScheduled(mn, nBlockHeight) && GetMasternodeTierRounds(mn.vin) == 1) continue;
 
         //it's too new, wait for a cycle
-        if (fFilterSigTime && mn.sigTime + (nMnCount * 2.6 * 60) > GetAdjustedTime()) continue;
+        if (fFilterSigTime && mn.sigTime + (millionsLocked * 2.6 * 60) > GetAdjustedTime()) continue;
 
         //make sure it has as many confirmations as there are masternodes
-        if (mn.GetMasternodeInputAge() < nMnCount) continue;
+        if (mn.GetMasternodeInputAge() < millionsLocked) continue;
+		
+        // Prevents masternodes from winning more than their tier number of times per cycle
+        tiers = GetMasternodeTierRounds(mn.vin);
+        collectedWins = masternodePayments.CountCycleWins(mn);
+        if (tiers <= collectedWins)
+        {
+            if ((nBlockHeight - mn.prevCycleFirstBlock) >= 0.95 * (millionsLocked - tiers))
+            // In case of tier-1 MN's winning twice or more, they skip the following cycle(s) to balance reward ratios
+            // Multi-tiered MN's do not skip any cycles
+            {
+                mn.wins = collectedWins - tiers; // If there are more wins than there should be, then the number of wins for the next cycle is reduced
+                mn.prevCycleFirstBlock = mn.currCycleFirstBlock;
+            }
+            continue;
+        }
 
         vecMasternodeLastPaid.push_back(make_pair(mn.SecondsSincePayment(), mn.vin));
     }

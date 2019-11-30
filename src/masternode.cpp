@@ -17,7 +17,7 @@ map<uint256, int> mapSeenMasternodeScanningErrors;
 // cache block hashes as we calculate them
 std::map<int64_t, uint256> mapCacheBlockHashes;
 
-static int GetMasternodeTierRounds(CTxIn vin)
+int GetMasternodeTierRounds(CTxIn vin)
 {
     LOCK(cs_main);
     CCoinsViewCache cache(pcoinsTip);
@@ -95,6 +95,9 @@ CMasternode::CMasternode()
     nScanningErrorCount = 0;
     nLastScanningErrorBlockHeight = 0;
     lastTimeChecked = 0;
+    wins = 0;
+    currCycleFirstBlock = chainActive.Height();
+    prevCycleFirstBlock = chainActive.Height();
 }
 
 CMasternode::CMasternode(const CMasternode& other)
@@ -118,6 +121,9 @@ CMasternode::CMasternode(const CMasternode& other)
     nScanningErrorCount = other.nScanningErrorCount;
     nLastScanningErrorBlockHeight = other.nLastScanningErrorBlockHeight;
     lastTimeChecked = 0;
+    wins = other.wins;
+    currCycleFirstBlock = other.currCycleFirstBlock;
+    prevCycleFirstBlock = other.prevCycleFirstBlock;
 }
 
 CMasternode::CMasternode(const CMasternodeBroadcast& mnb)
@@ -141,6 +147,9 @@ CMasternode::CMasternode(const CMasternodeBroadcast& mnb)
     nScanningErrorCount = 0;
     nLastScanningErrorBlockHeight = 0;
     lastTimeChecked = 0;
+    wins = mnb.wins;
+    currCycleFirstBlock = mnb.currCycleFirstBlock;
+    prevCycleFirstBlock = mnb.prevCycleFirstBlock;
 }
 
 //
@@ -166,6 +175,18 @@ bool CMasternode::UpdateFromNewBroadcast(CMasternodeBroadcast& mnb)
     return false;
 }
 
+void CMasternode::addWin(int blockHeight)
+{
+    int tier = GetMasternodeTierRounds(vin);
+    if (currCycleFirstBlock == prevCycleFirstBlock)
+        currCycleFirstBlock = blockHeight;
+    if (++wins >= tier)
+    {
+        wins = wins - tier;
+        prevCycleFirstBlock = currCycleFirstBlock;
+    }
+}
+
 //
 // Deterministically calculate a given "score" for a Masternode depending on how close it's hash is to
 // the proof of work for that block. The further away they are the better, the furthest will win the election
@@ -184,7 +205,6 @@ uint256 CMasternode::CalculateScore(int mod, int64_t nBlockHeight)
     }
 
     int nRounds = GetMasternodeTierRounds(vin);
-
     uint256 r;
 
     CHashWriter ss(SER_GETHASH, PROTOCOL_VERSION);
@@ -285,7 +305,7 @@ int64_t CMasternode::GetLastPaid()
 
     const CBlockIndex* BlockReading = chainActive.Tip();
 
-    int nMnCount = mnodeman.CountEnabled() * 1.25;
+    int nMnCount = mnodeman.CountMillionsLocked() * 1.25;
     int n = 0;
     for (unsigned int i = 1; BlockReading && BlockReading->nHeight > 0; i++) {
         if (n >= nMnCount) {
@@ -299,6 +319,17 @@ int64_t CMasternode::GetLastPaid()
                 to converge on the same payees quickly, then keep the same schedule.
             */
             if (masternodePayments.mapMasternodeBlocks[BlockReading->nHeight].HasPayeeWithVotes(mnpayee, 2)) {
+                if (wins != 0)
+                {
+                    while (BlockReading->nHeight != prevCycleFirstBlock)
+                    {
+                        if (BlockReading->pprev == NULL) {
+                            assert(BlockReading);
+                            break;
+                        }
+                        BlockReading = BlockReading->pprev;
+                    }
+                }
                 return BlockReading->nTime + nOffset;
             }
         }
@@ -796,7 +827,7 @@ bool CMasternodePing::CheckAndUpdate(int& nDos, bool fRequireEnabled, bool fChec
 
         // LogPrint("masternode","mnping - Found corresponding mn for vin: %s\n", vin.ToString());
         // update only if there is no known ping for this masternode or
-        // last ping was more then MASTERNODE_MIN_MNP_SECONDS-60 ago comparing to this one
+        // last ping was more than MASTERNODE_MIN_MNP_SECONDS-60 ago comparing to this one
         if (!pmn->IsPingedWithin(MASTERNODE_MIN_MNP_SECONDS - 60, sigTime)) {
         	if (!VerifySignature(pmn->pubKeyMasternode, nDos))
                 return false;

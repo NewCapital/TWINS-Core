@@ -31,7 +31,7 @@ class CMasternodePing;
 extern map<int64_t, uint256> mapCacheBlockHashes;
 
 bool GetBlockHash(uint256& hash, int nBlockHeight);
-
+int GetMasternodeTierRounds(CTxIn vin);
 
 //
 // The Masternode Ping Class : Contains a different serialize method for sending pings from masternodes throughout the network
@@ -144,7 +144,10 @@ public:
     int nScanningErrorCount;
     int nLastScanningErrorBlockHeight;
     CMasternodePing lastPing;
-
+    int wins; // wins in the current cycle
+    int prevCycleFirstBlock; // first paid block of the current payment cycle
+    int currCycleFirstBlock; // first paid block of the previous payment cycle
+	
     CMasternode();
     CMasternode(const CMasternode& other);
     CMasternode(const CMasternodeBroadcast& mnb);
@@ -173,6 +176,9 @@ public:
         swap(first.nLastDsq, second.nLastDsq);
         swap(first.nScanningErrorCount, second.nScanningErrorCount);
         swap(first.nLastScanningErrorBlockHeight, second.nLastScanningErrorBlockHeight);
+        swap(first.wins, second.wins);
+        swap(first.prevCycleFirstBlock, second.prevCycleFirstBlock);
+        swap(first.currCycleFirstBlock, second.currCycleFirstBlock);
     }
 
     CMasternode& operator=(CMasternode from)
@@ -190,7 +196,11 @@ public:
     }
 
     uint256 CalculateScore(int mod = 1, int64_t nBlockHeight = 0);
-
+	
+    // adds a win to a masternode
+    void addWin(int blockHeight);
+	
+	
     ADD_SERIALIZE_METHODS;
 
     template <typename Stream, typename Operation>
@@ -245,6 +255,9 @@ public:
     {
         sigTime = 0;
         lastPing = CMasternodePing();
+        wins = 0;
+        currCycleFirstBlock = 0;
+        prevCycleFirstBlock = 0;
     }
 
     bool IsEnabled()
