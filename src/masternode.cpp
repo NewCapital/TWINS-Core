@@ -321,7 +321,7 @@ int64_t CMasternode::GetLastPaid()
             if (masternodePayments.mapMasternodeBlocks[BlockReading->nHeight].HasPayeeWithVotes(mnpayee, 2)) {
                 if (wins != 0)
                 {
-                    while (BlockReading->nHeight != prevCycleFirstBlock)
+                    while (BlockReading->nHeight > prevCycleFirstBlock)
                     {
                         if (BlockReading->pprev == NULL) {
                             assert(BlockReading);

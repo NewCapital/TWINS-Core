@@ -830,7 +830,6 @@ bool CMasternodePayments::ProcessBlock(int nBlockHeight)
         if (AddWinningMasternode(newWinner)) {
             newWinner.Relay();
             nLastBlockHeight = nBlockHeight;
-            if (pmn) pmn->addWin(nBlockHeight);
             return true;
         }
     }
