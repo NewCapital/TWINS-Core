@@ -184,7 +184,7 @@ void CMasternode::addWin(int blockHeight)
     {
         wins = wins - tier;
         prevCycleFirstBlock = currCycleFirstBlock;
-    }	
+    }
 }
 
 //
