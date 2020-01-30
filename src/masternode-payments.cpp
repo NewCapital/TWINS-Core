@@ -472,11 +472,11 @@ void CMasternodePayments::ProcessMessageMasternodePayments(CNode* pfrom, std::st
         CTxDestination address1;
         ExtractDestination(winner.payee, address1);
         CBitcoinAddress address2(address1);
-		
-        if (!mnodeman.Find(address1))// Non masternode address
-        {
-            return;
-        }
+
+        // if (!mnodeman.Find(address1))// Non masternode address
+        // {
+        //     return;
+        // }
 
         //   LogPrint("mnpayments", "mnw - winning vote - Addr %s Height %d bestHeight %d - %s\n", address2.ToString().c_str(), winner.nBlockHeight, nHeight, winner.vinMasternode.prevout.ToStringShort());
 
@@ -551,17 +551,17 @@ int CMasternodePayments::CountCycleWins(CMasternode& mn)
 {
 	int count = 0;
 	LOCK(cs_mapMasternodeBlocks);
-	
+
     int nHeight;
     {
         TRY_LOCK(cs_main, locked);
         if (!locked || chainActive.Tip() == NULL) return false;
         nHeight = chainActive.Tip()->nHeight;
     }
-	
+
 	CScript mnpayee;
     mnpayee = GetScriptForDestination(mn.pubKeyCollateralAddress.GetID());
-	
+
 	CScript payee;
     for (int64_t h = mn.currCycleFirstBlock; h <= GetNewestBlock(); h++) {
         if (mapMasternodeBlocks.count(h)) {
