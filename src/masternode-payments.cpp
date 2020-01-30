@@ -414,7 +414,7 @@ void CMasternodePayments::ProcessMessageMasternodePayments(CNode* pfrom, std::st
         if (Params().NetworkID() == CBaseChainParams::MAIN) {
             if (pfrom->HasFulfilledRequest("mnget")) {
                 LogPrintf("CMasternodePayments::ProcessMessageMasternodePayments() : mnget - peer already asked me for the list\n");
-                Misbehaving(pfrom->GetId(), 20);
+                //Misbehaving(pfrom->GetId(), 20);
                 return;
             }
         }
@@ -473,10 +473,10 @@ void CMasternodePayments::ProcessMessageMasternodePayments(CNode* pfrom, std::st
         ExtractDestination(winner.payee, address1);
         CBitcoinAddress address2(address1);
 
-        // if (!mnodeman.Find(address1))// Non masternode address
-        // {
-        //     return;
-        // }
+        if (!mnodeman.Find(address1))// Non masternode address
+        {
+            return;
+        }
 
         //   LogPrint("mnpayments", "mnw - winning vote - Addr %s Height %d bestHeight %d - %s\n", address2.ToString().c_str(), winner.nBlockHeight, nHeight, winner.vinMasternode.prevout.ToStringShort());
 
@@ -835,7 +835,6 @@ bool CMasternodePayments::ProcessBlock(int nBlockHeight)
         if (AddWinningMasternode(newWinner)) {
             newWinner.Relay();
             nLastBlockHeight = nBlockHeight;
-            if (pmn) pmn->addWin(nBlockHeight);
             return true;
         }
     }

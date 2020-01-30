@@ -271,7 +271,6 @@ int64_t CMasternode::SecondsSincePayment()
 {
     CScript pubkeyScript;
     pubkeyScript = GetScriptForDestination(pubKeyCollateralAddress.GetID());
-
     int64_t sec = (GetAdjustedTime() - GetLastPaid());
     int64_t month = 2592000; //60 * 60 * 24 * 30
     if (sec < month) return sec; //if it's less than 30 days, give seconds
@@ -286,13 +285,13 @@ int64_t CMasternode::SecondsSincePayment()
 }
 
 int64_t CMasternode::GetLastPaid()
-{
+{	
     CBlockIndex* pindexPrev = chainActive.Tip();
     if (pindexPrev == NULL) return false;
 
     CScript mnpayee;
     mnpayee = GetScriptForDestination(pubKeyCollateralAddress.GetID());
-
+	
     CHashWriter ss(SER_GETHASH, PROTOCOL_VERSION);
     ss << vin;
     ss << sigTime;
@@ -321,7 +320,7 @@ int64_t CMasternode::GetLastPaid()
             if (masternodePayments.mapMasternodeBlocks[BlockReading->nHeight].HasPayeeWithVotes(mnpayee, 2)) {
                 if (wins != 0)
                 {
-                    while (BlockReading->nHeight != prevCycleFirstBlock)
+                    while (BlockReading->nHeight > prevCycleFirstBlock)
                     {
                         if (BlockReading->pprev == NULL) {
                             assert(BlockReading);
