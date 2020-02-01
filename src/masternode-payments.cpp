@@ -385,7 +385,7 @@ void CMasternodePayments::FillBlockPayee(CMutableTransaction& txNew, int64_t nFe
 
             //subtract mn payment from the stake reward
             if (!txNew.vout[1].IsZerocoinMint())
-                txNew.vout[i - 1].nValue -= nDevReward;
+                txNew.vout[i].nValue -= nDevReward;
         }
     }
 }
