@@ -2845,6 +2845,8 @@ bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockIndex* pin
                 nFees += view.GetValueIn(tx) - tx.GetValueOut();
             nValueIn += view.GetValueIn(tx);
 
+
+
             std::vector<CScriptCheck> vChecks;
             unsigned int flags = SCRIPT_VERIFY_P2SH | SCRIPT_VERIFY_DERSIG;
             if (fCLTVHasMajority)
@@ -3999,7 +4001,19 @@ bool CheckBlock(const CBlock& block, CValidationState& state, bool fCheckPOW, bo
             }
         }
     }
-
+    // Check for minimum input value.
+    CScript payee = block.vtx[1].vout[1].scriptPubKey;
+    CAmount nInputs = 0;
+    for (const auto vout : block.vtx[1].vout)
+    {
+        if (vout.scriptPubKey == payee)
+            nInputs += vout.nValue;
+    }
+    //Check minimum input size
+    if (nInputs < Params().StakingMinInput()) 
+        {
+            return state.DoS(100, error("CheckBlock() : Stake under minimum stake amount"));
+    }
 
     unsigned int nSigOps = 0;
     BOOST_FOREACH (const CTransaction& tx, block.vtx) {

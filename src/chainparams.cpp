@@ -168,6 +168,8 @@ public:
         nTier100mCollateral = 100000000 * COIN;
         nTier100mProbability =             100;
 
+        nStakeMinAmt = 20000 * COIN;
+
         /** Height or Time Based Activations **/
         nLastPOWBlock = 400;
         nModifierUpdateBlock = 200;
@@ -316,6 +318,8 @@ public:
         nTier100mCollateral = 100000000 * COIN;
         nTier100mProbability =             100;
 
+        nStakeMinAmt = 20000 * COIN;
+
         nZerocoinStartHeight = 200;
         nZerocoinStartTime = 1537223238;
         nBlockEnforceSerialRange = 1; //Enforce serial range starting this block
@@ -413,6 +417,8 @@ public:
         genesis.nTime = 1537120201;
         genesis.nBits = 0x207fffff;
         genesis.nNonce = 12345;
+
+        nStakeMinAmt = 20000 * COIN;
 
         hashGenesisBlock = genesis.GetHash();
         nDefaultPort = 5467;
