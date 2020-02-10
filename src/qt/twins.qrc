@@ -33,6 +33,7 @@
         <file alias="history">res/icons/history.png</file>
         <file alias="overview">res/icons/overview.png</file>
         <file alias="shop">res/icons/shop.png</file>
+         <file alias="community">res/icons/community.png</file>
         <file alias="stats">res/icons/stats.png</file>
         <file alias="masternodes">res/icons/masternodes.png</file>
         <file alias="export">res/icons/export.png</file>
