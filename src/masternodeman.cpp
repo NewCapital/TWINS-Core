@@ -502,8 +502,6 @@ CMasternode* CMasternodeMan::Find(const CTxDestination& address)
 CMasternode* CMasternodeMan::GetNextMasternodeInQueueForPayment(int nBlockHeight, bool fFilterSigTime, int& nCount)
 {
     LOCK(cs);
-    int tiers, collectedWins;
-
     CMasternode* pBestMasternode = NULL;
     std::vector<pair<int64_t, CTxIn> > vecMasternodeLastPaid;
 
@@ -531,21 +529,6 @@ CMasternode* CMasternodeMan::GetNextMasternodeInQueueForPayment(int nBlockHeight
         //make sure it has as many confirmations as there are masternodes
         if (mn.GetMasternodeInputAge() < millionsLocked) continue;
 		
-        // Prevents masternodes from winning more than their tier number of times per cycle
-        tiers = GetMasternodeTierRounds(mn.vin);
-        collectedWins = masternodePayments.CountCycleWins(mn);
-        if (tiers <= collectedWins)
-        {
-            if ((nBlockHeight - mn.prevCycleFirstBlock) >= 0.95 * (millionsLocked - tiers))
-            // In case of tier-1 MN's winning twice or more, they skip the following cycle(s) to balance reward ratios
-            // Multi-tiered MN's do not skip any cycles
-            {
-                mn.wins = collectedWins - tiers; // If there are more wins than there should be, then the number of wins for the next cycle is reduced
-                mn.prevCycleFirstBlock = mn.currCycleFirstBlock;
-            }
-            continue;
-        }
-
         vecMasternodeLastPaid.push_back(make_pair(mn.SecondsSincePayment(), mn.vin));
     }
 

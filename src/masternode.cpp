@@ -96,8 +96,7 @@ CMasternode::CMasternode()
     nLastScanningErrorBlockHeight = 0;
     lastTimeChecked = 0;
     wins = 0;
-    currCycleFirstBlock = chainActive.Height();
-    prevCycleFirstBlock = chainActive.Height();
+    prevCycleLastBlock = chainActive.Height();
 }
 
 CMasternode::CMasternode(const CMasternode& other)
@@ -122,8 +121,7 @@ CMasternode::CMasternode(const CMasternode& other)
     nLastScanningErrorBlockHeight = other.nLastScanningErrorBlockHeight;
     lastTimeChecked = 0;
     wins = other.wins;
-    currCycleFirstBlock = other.currCycleFirstBlock;
-    prevCycleFirstBlock = other.prevCycleFirstBlock;
+    prevCycleLastBlock = other.prevCycleLastBlock;
 }
 
 CMasternode::CMasternode(const CMasternodeBroadcast& mnb)
@@ -148,8 +146,7 @@ CMasternode::CMasternode(const CMasternodeBroadcast& mnb)
     nLastScanningErrorBlockHeight = 0;
     lastTimeChecked = 0;
     wins = mnb.wins;
-    currCycleFirstBlock = mnb.currCycleFirstBlock;
-    prevCycleFirstBlock = mnb.prevCycleFirstBlock;
+    prevCycleLastBlock = mnb.prevCycleLastBlock;
 }
 
 //
@@ -178,12 +175,10 @@ bool CMasternode::UpdateFromNewBroadcast(CMasternodeBroadcast& mnb)
 void CMasternode::addWin(int blockHeight)
 {
     int tier = GetMasternodeTierRounds(vin);
-    if (currCycleFirstBlock == prevCycleFirstBlock)
-        currCycleFirstBlock = blockHeight;
     if (++wins >= tier)
     {
         wins = wins - tier;
-        prevCycleFirstBlock = currCycleFirstBlock;
+        prevCycleLastBlock = blockHeight;
     }
 }
 
@@ -320,12 +315,16 @@ int64_t CMasternode::GetLastPaid()
             if (masternodePayments.mapMasternodeBlocks[BlockReading->nHeight].HasPayeeWithVotes(mnpayee, 2)) {
                 if (wins != 0)
                 {
-                    while (BlockReading->nHeight > prevCycleFirstBlock)
+                    while (BlockReading->nHeight > prevCycleLastBlock)
                     {
                         if (BlockReading->pprev == NULL) {
                             assert(BlockReading);
                             break;
                         }
+                        if (n >= nMnCount) {
+                            return 0;
+                        }
+                        n++;
                         BlockReading = BlockReading->pprev;
                     }
                 }
