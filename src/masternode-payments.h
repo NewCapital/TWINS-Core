@@ -264,7 +264,6 @@ public:
     bool GetBlockPayee(int nBlockHeight, CScript& payee);
     bool IsTransactionValid(const CTransaction& txNew, int nBlockHeight);
     bool IsScheduled(CMasternode& mn, int nNotBlockHeight);
-	int CountCycleWins(CMasternode& mn);
 	
     bool CanVote(COutPoint outMasternode, int nBlockHeight)
     {
