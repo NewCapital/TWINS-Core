@@ -97,7 +97,6 @@ public:
     /** TWINS part **/
     bool isMasternodeTierCollateral(CAmount nValue) const { return (nValue == nTier1mCollateral || nValue == nTier5mCollateral || nValue == nTier20mCollateral || nValue == nTier100mCollateral); }
     bool isMasternodeBaseCollateral(CAmount nValue) const { return (nValue == nTier1mCollateral); }
-    CAmount StakingMinInput() const { return nStakeMinAmt; }
     CAmount Tier1mCollateral() const { return nTier1mCollateral; }
     CAmount Tier1mProbability() const { return nTier1mProbability; }
     CAmount Tier5mCollateral() const { return nTier5mCollateral; }
@@ -168,7 +167,6 @@ protected:
     int nMasternodeCountDrift;
     int nMaturity;
     int nModifierUpdateBlock;
-    CAmount nStakeMinAmt;
     CAmount nMaxMoneyOut;
     /*TWINS part */
     CAmount nTier1mCollateral;

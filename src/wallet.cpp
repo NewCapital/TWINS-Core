@@ -2408,10 +2408,6 @@ bool CWallet::SelectStakeCoins(std::list<std::unique_ptr<CStakeInput> >& listInp
             if (out.nDepth < (out.tx->IsCoinStake() ? Params().COINBASE_MATURITY() : 10))
                 continue;
 
-            //check min input amount
-            if (out.tx->vout[out.i].nValue < Params().StakingMinInput())
-                continue;
-
             //add to our stake set
             nAmountSelected += out.tx->vout[out.i].nValue;
 
