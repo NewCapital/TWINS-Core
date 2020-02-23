@@ -374,21 +374,21 @@ void BitcoinGUI::createActions(const NetworkStyle* networkStyle)
     //Init Shop Action
     showShopAction = new QAction(QIcon(":/icons/shop"), tr("&Shop"), this);
     showShopAction->setStatusTip(tr("Open TWINS shop"));
-    showShopAction->setToolTip(historyAction->statusTip());
+    showShopAction->setToolTip(showShopAction->statusTip());
     showShopAction->setCheckable(false);
     tabGroup->addAction(showShopAction);
 
     //Init Shop Action
     showCommunityAction= new QAction(QIcon(":/icons/community"), tr("&Community"), this);
     showCommunityAction->setStatusTip(tr("Open community page"));
-    showCommunityAction->setToolTip(historyAction->statusTip());
+    showCommunityAction->setToolTip(showCommunityAction->statusTip());
     showCommunityAction->setCheckable(false);
     tabGroup->addAction(showCommunityAction);
 
     //Init Stat Action
     showStatisticsAction = new QAction(QIcon(":/icons/stats"), tr("&Statistics"), this);
     showStatisticsAction->setStatusTip(tr("Open TWINS statistics"));
-    showStatisticsAction->setToolTip(historyAction->statusTip());
+    showStatisticsAction->setToolTip(showStatisticsAction->statusTip());
     showStatisticsAction->setCheckable(false);
     tabGroup->addAction(showStatisticsAction);
 
