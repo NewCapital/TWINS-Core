@@ -107,6 +107,7 @@ public:
     CAmount Tier20mProbability() const { return nTier20mProbability; }
     CAmount Tier100mCollateral() const { return nTier100mCollateral; }
     CAmount Tier100mProbability() const { return nTier100mProbability; }
+    CAmount StakingMinInput() const { return nStakeMinInput; }
 
     /** Spork key and Masternode Handling **/
     std::string SporkKey() const { return strSporkKey; }

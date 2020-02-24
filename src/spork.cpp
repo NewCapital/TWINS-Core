@@ -139,6 +139,7 @@ int64_t GetSporkValue(int nSporkID)
         if (nSporkID == SPORK_16_ZEROCOIN_MAINTENANCE_MODE) r = SPORK_16_ZEROCOIN_MAINTENANCE_MODE_DEFAULT;
 
         if (nSporkID == SPORK_TWINS_01_ENABLE_MASTERNODE_TIERS) r = SPORK_TWINS_01_ENABLE_MASTERNODE_TIERS_DEFAULT;
+        if (nSporkID == SPORK_TWINS_02_MIN_STAKE_AMOUNT) r = SPORK_TWINS_02_MIN_STAKE_AMOUNT_DEFAULT;
 
         if (r == -1) LogPrintf("%s : Unknown Spork %d\n", __func__, nSporkID);
     }
@@ -291,6 +292,7 @@ int CSporkManager::GetSporkIDByName(std::string strName)
     if (strName == "SPORK_16_ZEROCOIN_MAINTENANCE_MODE") return SPORK_16_ZEROCOIN_MAINTENANCE_MODE;
 
     if (strName == "SPORK_TWINS_01_ENABLE_MASTERNODE_TIERS") return SPORK_TWINS_01_ENABLE_MASTERNODE_TIERS;
+    if (strName == "SPORK_TWINS_02_MIN_STAKE_AMOUNT") return = SPORK_TWINS_02_MIN_STAKE_AMOUNT_DEFAULT;
 
     return -1;
 }
@@ -310,6 +312,7 @@ std::string CSporkManager::GetSporkNameByID(int id)
     if (id == SPORK_16_ZEROCOIN_MAINTENANCE_MODE) return "SPORK_16_ZEROCOIN_MAINTENANCE_MODE";
 
     if (id == SPORK_TWINS_01_ENABLE_MASTERNODE_TIERS) return "SPORK_TWINS_01_ENABLE_MASTERNODE_TIERS";
+    if (id == SPORK_TWINS_02_MIN_STAKE_AMOUNT) return = SPORK_TWINS_02_MIN_STAKE_AMOUNT_DEFAULT;
 
     return "Unknown";
 }
