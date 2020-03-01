@@ -180,6 +180,7 @@ protected:
     CAmount nTier20mProbability;
     CAmount nTier100mCollateral;
     CAmount nTier100mProbability;
+    CAmount nStakeMinInput;
     int nMinerThreads;
     std::vector<CDNSSeedData> vSeeds;
     std::vector<unsigned char> base58Prefixes[MAX_BASE58_TYPES];
