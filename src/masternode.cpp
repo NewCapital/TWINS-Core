@@ -96,7 +96,7 @@ CMasternode::CMasternode()
     nLastScanningErrorBlockHeight = 0;
     lastTimeChecked = 0;
     wins = 0;
-    prevCycleLastBlock = chainActive.Height();
+    prevCycleLastPaymentTime = 0;
 }
 
 CMasternode::CMasternode(const CMasternode& other)
@@ -121,7 +121,7 @@ CMasternode::CMasternode(const CMasternode& other)
     nLastScanningErrorBlockHeight = other.nLastScanningErrorBlockHeight;
     lastTimeChecked = 0;
     wins = other.wins;
-    prevCycleLastBlock = other.prevCycleLastBlock;
+    prevCycleLastPaymentTime = other.prevCycleLastPaymentTime;
 }
 
 CMasternode::CMasternode(const CMasternodeBroadcast& mnb)
@@ -145,8 +145,6 @@ CMasternode::CMasternode(const CMasternodeBroadcast& mnb)
     nScanningErrorCount = 0;
     nLastScanningErrorBlockHeight = 0;
     lastTimeChecked = 0;
-    wins = mnb.wins;
-    prevCycleLastBlock = mnb.prevCycleLastBlock;
 }
 
 //
@@ -178,7 +176,7 @@ void CMasternode::addWin(int blockHeight)
     if (++wins >= tier)
     {
         wins = wins - tier;
-        prevCycleLastBlock = blockHeight;
+        prevCycleLastPaymentTime = GetAdjustedTime();
     }
 }
 
@@ -266,7 +264,14 @@ int64_t CMasternode::SecondsSincePayment()
 {
     CScript pubkeyScript;
     pubkeyScript = GetScriptForDestination(pubKeyCollateralAddress.GetID());
-    int64_t sec = (GetAdjustedTime() - GetLastPaid());
+    int64_t sec;
+    if (prevCycleLastPaymentTime != 0)
+        sec = (GetAdjustedTime() - prevCycleLastPaymentTime);
+    else
+    {
+        prevCycleLastPaymentTime = GetLastPaid();
+        sec = (GetAdjustedTime() - prevCycleLastPaymentTime);
+    }
     int64_t month = 2592000; //60 * 60 * 24 * 30
     if (sec < month) return sec; //if it's less than 30 days, give seconds
 
@@ -280,7 +285,7 @@ int64_t CMasternode::SecondsSincePayment()
 }
 
 int64_t CMasternode::GetLastPaid()
-{	
+{
     CBlockIndex* pindexPrev = chainActive.Tip();
     if (pindexPrev == NULL) return false;
 
@@ -313,21 +318,6 @@ int64_t CMasternode::GetLastPaid()
                 to converge on the same payees quickly, then keep the same schedule.
             */
             if (masternodePayments.mapMasternodeBlocks[BlockReading->nHeight].HasPayeeWithVotes(mnpayee, 2)) {
-                if (wins != 0)
-                {
-                    while (BlockReading->nHeight > prevCycleLastBlock)
-                    {
-                        if (BlockReading->pprev == NULL) {
-                            assert(BlockReading);
-                            break;
-                        }
-                        if (n >= nMnCount) {
-                            return 0;
-                        }
-                        n++;
-                        BlockReading = BlockReading->pprev;
-                    }
-                }
                 return BlockReading->nTime + nOffset;
             }
         }

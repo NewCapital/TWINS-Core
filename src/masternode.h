@@ -145,7 +145,7 @@ public:
     int nLastScanningErrorBlockHeight;
     CMasternodePing lastPing;
     int wins; // wins in the current cycle
-    int prevCycleLastBlock; // last paid block of the current payment cycle
+    int64_t prevCycleLastPaymentTime; // time of the last payment of the previous cycle
 	
     CMasternode();
     CMasternode(const CMasternode& other);
@@ -176,7 +176,7 @@ public:
         swap(first.nScanningErrorCount, second.nScanningErrorCount);
         swap(first.nLastScanningErrorBlockHeight, second.nLastScanningErrorBlockHeight);
         swap(first.wins, second.wins);
-        swap(first.prevCycleLastBlock, second.prevCycleLastBlock);
+        swap(first.prevCycleLastPaymentTime, second.prevCycleLastPaymentTime);
     }
 
     CMasternode& operator=(CMasternode from)
@@ -254,7 +254,7 @@ public:
         sigTime = 0;
         lastPing = CMasternodePing();
         wins = 0;
-        prevCycleLastBlock = chainActive.Tip()->nHeight;
+        prevCycleLastPaymentTime = 0;
     }
 
     bool IsEnabled()
