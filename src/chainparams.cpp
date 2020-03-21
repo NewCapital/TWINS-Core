@@ -173,7 +173,7 @@ public:
         nTier20mProbability =               20;
         nTier100mCollateral = 100000000 * COIN;
         nTier100mProbability =             100;
-        nStakeMinInput = 20000 * COIN;
+        nStakeMinInput = 12000 * COIN;
 
         /** Height or Time Based Activations **/
         nLastPOWBlock = 400;
@@ -322,7 +322,7 @@ public:
         nTier20mProbability =               20;
         nTier100mCollateral = 100000000 * COIN;
         nTier100mProbability =             100;
-        nStakeMinInput = 20000 * COIN;
+        nStakeMinInput = 12000 * COIN;
 
         nZerocoinStartHeight = 200;
         nZerocoinStartTime = 1537223238;
