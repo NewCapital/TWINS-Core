@@ -89,7 +89,7 @@ static Checkpoints::MapCheckpoints mapCheckpoints =
     (300000, uint256("9e1eb7bfc58e66ad4ff62ca20b6c0aa838c2a6151100c574548317affb214212"))
     (314883, uint256("07ed00a702b3e78a6a1664befb950ecb08e112ad1f4af65f3d6b08d593b84929"))
     (316999, uint256("867f64f36a34f99881b19e9e4802149b3f37978085245fb37be6fd1a0583f459"))
-    (317000, uint256("62587246a1e9cbc9a94e5645068bd7ed2062f99205f12fa91677b1aba70c39db")) // Min staking enforcement, New protocol enforcement (70922)
+    (317000, uint256("1657f2baa2b635805daccb32adbe7b5da847b2e96f7a7da8b213cccc6c90f262")) // Min staking enforcement, New protocol enforcement (70922)
     (317001, uint256("ed7a7c72e9c31ef0e9e08da12a0ac57ccd87ff0ddf0e6694e4ce1edd9761b23b"))
     (317005, uint256("44405d602b2dca51798def580721c768280cb57f729bf74c02d586caa0b22812"))
     // (, uint256(""))
