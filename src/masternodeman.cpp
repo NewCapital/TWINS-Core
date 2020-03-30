@@ -403,6 +403,24 @@ int CMasternodeMan::CountMillionsLocked(int protocolVersion)
     return i;
 }
 
+/*
+    When a new masternode is added, it waits only for older masternodes, i.e. those connected before it
+*/
+int CMasternodeMan::CountMillionsLockedLaunch(int protocolVersion, int64_t sigTime)
+{
+    int i = 0;
+    protocolVersion = protocolVersion == -1 ? masternodePayments.GetMinMasternodePaymentsProto() : protocolVersion;
+
+    BOOST_FOREACH (CMasternode& mn, vMasternodes) {
+        mn.Check();
+        if (mn.protocolVersion < protocolVersion || !mn.IsEnabled() || (int64_t)(mn.sigTime) >= sigTime)
+            continue; // masternode doesn't count millions locked in masternodes younger than itself
+        i += GetMasternodeTierRounds(mn.vin);
+    }
+
+    return i;
+}
+
 void CMasternodeMan::CountNetworks(int protocolVersion, int& ipv4, int& ipv6, int& onion)
 {
     protocolVersion = protocolVersion == -1 ? masternodePayments.GetMinMasternodePaymentsProto() : protocolVersion;
@@ -510,7 +528,7 @@ CMasternode* CMasternodeMan::GetNextMasternodeInQueueForPayment(int nBlockHeight
     */
 
     int nMnCount = CountEnabled();
-    int millionsLocked = CountMillionsLocked();
+    int millionsLocked;
 	
     BOOST_FOREACH (CMasternode& mn, vMasternodes) {
         mn.Check();
@@ -522,6 +540,8 @@ CMasternode* CMasternodeMan::GetNextMasternodeInQueueForPayment(int nBlockHeight
         //it's in the list -- so let's skip it
         // Don't check multi-tier masternodes. They can be scheduled to be paid multiple times
         if (masternodePayments.IsScheduled(mn, nBlockHeight) && GetMasternodeTierRounds(mn.vin) == 1) continue;
+
+        millionsLocked = CountMillionsLockedLaunch(-1, (int64_t)mn.sigTime);
 
         //it's too new, wait for a cycle
         if (fFilterSigTime && mn.sigTime + (millionsLocked * 2.6 * 60) > GetAdjustedTime()) continue;

@@ -114,6 +114,8 @@ public:
 	
     int CountMillionsLocked(int protocolVersion = -1);
 
+    int CountMillionsLockedLaunch(int protocolVersion, int64_t sigTime);
+
     void CountNetworks(int protocolVersion, int& ipv4, int& ipv6, int& onion);
 
     void DsegUpdate(CNode* pnode);
