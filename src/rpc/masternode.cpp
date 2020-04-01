@@ -215,6 +215,7 @@ UniValue listmasternodes(const UniValue& params, bool fHelp)
             "    \"lastseen\": ttt,     (numeric) The time in seconds since epoch (Jan 1 1970 GMT) of the last seen\n"
             "    \"activetime\": ttt,   (numeric) The time in seconds since epoch (Jan 1 1970 GMT) masternode has been active\n"
             "    \"lastpaid\": ttt,     (numeric) The time in seconds since epoch (Jan 1 1970 GMT) masternode was last paid\n"
+            "    \"seconds since payment\": ttt (numeric) The time in seconds since Jan 1 1970 seconds since the first reward of the masternode last cycle\n"
             "  }\n"
             "  ,...\n"
             "]\n"
@@ -267,6 +268,7 @@ UniValue listmasternodes(const UniValue& params, bool fHelp)
             obj.push_back(Pair("lastseen", (int64_t)mn->lastPing.sigTime));
             obj.push_back(Pair("activetime", (int64_t)(mn->lastPing.sigTime - mn->sigTime)));
             obj.push_back(Pair("lastpaid", (int64_t)mn->GetLastPaid()));
+            obj.push_back(Pair("secondsSincePayment", mn->SecondsSincePayment()));
 
             ret.push_back(obj);
         }
