@@ -96,7 +96,7 @@ CMasternode::CMasternode()
     nLastScanningErrorBlockHeight = 0;
     lastTimeChecked = 0;
     wins = 0;
-    prevCycleLastPaymentTime = 0;
+    prevCycleLastPaymentTime = GetAdjustedTime();
 }
 
 CMasternode::CMasternode(const CMasternode& other)
@@ -121,7 +121,11 @@ CMasternode::CMasternode(const CMasternode& other)
     nLastScanningErrorBlockHeight = other.nLastScanningErrorBlockHeight;
     lastTimeChecked = 0;
     wins = other.wins;
-    prevCycleLastPaymentTime = other.prevCycleLastPaymentTime;
+    // update only if a valid is passed
+    if (other.prevCycleLastPaymentTime < GetAdjustedTime() && other.prevCycleLastPaymentTime > 0)
+    {
+        prevCycleLastPaymentTime = other.prevCycleLastPaymentTime;
+    }
 }
 
 CMasternode::CMasternode(const CMasternodeBroadcast& mnb)
@@ -145,6 +149,7 @@ CMasternode::CMasternode(const CMasternodeBroadcast& mnb)
     nScanningErrorCount = 0;
     nLastScanningErrorBlockHeight = 0;
     lastTimeChecked = 0;
+    prevCycleLastPaymentTime = GetAdjustedTime();
 }
 
 //
@@ -265,11 +270,13 @@ int64_t CMasternode::SecondsSincePayment()
     CScript pubkeyScript;
     pubkeyScript = GetScriptForDestination(pubKeyCollateralAddress.GetID());
     int64_t sec;
-    if (prevCycleLastPaymentTime != 0)
-        sec = (GetAdjustedTime() - prevCycleLastPaymentTime);
-    else
+    if (prevCycleLastPaymentTime > 0 && prevCycleLastPaymentTime < GetAdjustedTime())
     {
-        prevCycleLastPaymentTime = GetLastPaid();
+        sec = (GetAdjustedTime() - prevCycleLastPaymentTime);
+    }
+    else // if the prevCycleLastPaymentTime is invalid, reset it (only happens when a wallet is launched)
+    {
+        prevCycleLastPaymentTime = GetAdjustedTime();
         sec = (GetAdjustedTime() - prevCycleLastPaymentTime);
     }
     int64_t month = 2592000; //60 * 60 * 24 * 30

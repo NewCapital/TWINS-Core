@@ -254,7 +254,7 @@ public:
         sigTime = 0;
         lastPing = CMasternodePing();
         wins = 0;
-        prevCycleLastPaymentTime = 0;
+        prevCycleLastPaymentTime = GetAdjustedTime();
     }
 
     bool IsEnabled()
