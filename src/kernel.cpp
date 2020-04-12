@@ -311,6 +311,11 @@ bool Stake(CStakeInput* stakeInput, unsigned int nBits, unsigned int nTimeBlockF
     if (nTimeBlockFrom + nStakeMinAge > nTimeTx) // Min age requirement
         return error("CheckStakeKernelHash() : min age violation - nTimeBlockFrom=%d nStakeMinAge=%d nTimeTx=%d",
                      nTimeBlockFrom, nStakeMinAge, nTimeTx);
+    
+    //Enforce minimum stake amount
+    if (nValueIn < Params().StakingMinInput())
+        return error("CheckStakeKernelHash() : Min Stake Input is %d, but we found %d", 
+                     Params().MinStakingInput()/COIN, nValueIn/COIN);
 
     //grab difficulty
     uint256 bnTargetPerCoinDay;
