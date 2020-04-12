@@ -21,7 +21,7 @@ bool fTestNet = false; //Params().NetworkID() == CBaseChainParams::TESTNET;
 // Modifier interval: time to elapse before new modifier is computed
 // Set to 3-hour for production network and 20-minute for test network
 unsigned int nModifierInterval;
-int nStakeTargetSpacing = 200; 
+int nStakeTargetSpacing = 200;
 unsigned int getIntervalVersion(bool fTestNet)
 {
     if (fTestNet)
@@ -311,11 +311,11 @@ bool Stake(CStakeInput* stakeInput, unsigned int nBits, unsigned int nTimeBlockF
     if (nTimeBlockFrom + nStakeMinAge > nTimeTx) // Min age requirement
         return error("CheckStakeKernelHash() : min age violation - nTimeBlockFrom=%d nStakeMinAge=%d nTimeTx=%d",
                      nTimeBlockFrom, nStakeMinAge, nTimeTx);
-    
+
     //Enforce minimum stake amount
-    if (nValueIn < Params().StakingMinInput())
-        return error("CheckStakeKernelHash() : Min Stake Input is %d, but we found %d", 
-                     Params().MinStakingInput()/COIN, nValueIn/COIN);
+    if (stakeInput->GetValue() < Params().StakingMinInput())
+        return error("CheckStakeKernelHash() : Min Stake Input is %d, but we found %d",
+                     Params().StakingMinInput()/COIN, nValueIn/COIN);
 
     //grab difficulty
     uint256 bnTargetPerCoinDay;
