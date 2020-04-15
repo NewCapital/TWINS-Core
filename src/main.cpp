@@ -3931,7 +3931,7 @@ bool CheckBlock(const CBlock& block, CValidationState& state, bool fCheckPOW, bo
         int nHeight = pindex->nHeight;
         // Ensure the output of the stake is above min amount
         if (IsSporkActive(SPORK_TWINS_02_MIN_STAKE_AMOUNT) &&
-              (nHeight >= (Params().NetworkID() == CBaseChainParams::MAIN? 317000 : 192500) )) {
+              (nHeight >= (Params().NetworkID() == CBaseChainParams::MAIN? 333500 : 192500) )) {
 
             if (block.vtx[1].vout[1].nValue < Params().StakingMinInput())
                 return state.DoS(100, error("CheckBlock() : stake under min. stake value"));
