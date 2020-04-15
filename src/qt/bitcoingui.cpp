@@ -889,7 +889,7 @@ void BitcoinGUI::gotoCommunityPage()
 
 void BitcoinGUI::gotoStatisticsPage()
 {
-    QDesktopServices::openUrl(QUrl("https://win.win/twins-coin.html", QUrl::TolerantMode));
+    QDesktopServices::openUrl(QUrl("https://chain.review/explorer/twins", QUrl::TolerantMode));
     showStatisticsAction->setChecked(false);
 }
 void BitcoinGUI::gotoSignMessageTab(QString addr)
