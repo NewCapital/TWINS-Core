@@ -49,7 +49,7 @@ Stage 3: NEM Catapult Fork (Proof of Stake)
 
 MAX Supply: 100B TWINS
 
-Collateral: 1M TWINS
+Collateral: 1M, 5M, 20M or 100M TWINS
 
 Blocktime: 120 Sec
 
