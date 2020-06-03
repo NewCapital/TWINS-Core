@@ -99,13 +99,18 @@ $(OSX_APP)/Contents/MacOS/TWINS-Qt: all-recursive
 	$(MKDIR_P) $(@D)
 	STRIPPROG="$(STRIP)" $(INSTALL_STRIP_PROGRAM)  $(BITCOIN_QT_BIN) $@
 
+$(OSX_APP)/Contents/MacOS/${BITCOIN_CLI_NAME}: all-recursive
+	$(MKDIR_P) $(@D)
+	STRIPPROG="$(STRIP)" $(INSTALL_STRIP_PROGRAM)  $(BITCOIN_CLI_BIN) $@
+
 $(OSX_APP)/Contents/Resources/Base.lproj/InfoPlist.strings:
 	$(MKDIR_P) $(@D)
 	echo '{	CFBundleDisplayName = "$(PACKAGE_NAME)"; CFBundleName = "$(PACKAGE_NAME)"; }' > $@
 
 OSX_APP_BUILT=$(OSX_APP)/Contents/PkgInfo $(OSX_APP)/Contents/Resources/empty.lproj \
   $(OSX_APP)/Contents/Resources/bitcoin.icns $(OSX_APP)/Contents/Info.plist \
-  $(OSX_APP)/Contents/MacOS/TWINS-Qt $(OSX_APP)/Contents/Resources/Base.lproj/InfoPlist.strings
+  $(OSX_APP)/Contents/MacOS/TWINS-Qt $(OSX_APP)/Contents/Resources/Base.lproj/InfoPlist.strings \
+	$(OSX_APP)/Contents/MacOS/${BITCOIN_CLI_NAME}
 
 osx_volname:
 	echo $(OSX_VOLNAME) >$@
