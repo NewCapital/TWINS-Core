@@ -548,7 +548,13 @@ CMasternode* CMasternodeMan::GetNextMasternodeInQueueForPayment(int nBlockHeight
 
         //make sure it has as many confirmations as there are masternodes
         if (mn.GetMasternodeInputAge() < millionsLocked) continue;
-		
+
+        if (!mn.cycleDataValid())
+        {
+            mn.prevCycleLastPaymentHash = chainActive.Tip()->GetBlockHash();
+            mn.prevCycleLastPaymentTime = GetAdjustedTime();
+            mn.wins = 0;
+        }
         vecMasternodeLastPaid.push_back(make_pair(mn.SecondsSincePayment(), mn.vin));
     }
 

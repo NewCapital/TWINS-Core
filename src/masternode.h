@@ -145,7 +145,17 @@ public:
     int nLastScanningErrorBlockHeight;
     CMasternodePing lastPing;
     int wins; // wins in the current cycle
-    int64_t prevCycleLastPaymentTime; // time of the last payment of the previous cycle
+
+    /*
+        Time and block hash of the last reward block in the previous masternode cycle
+        prevCycleLastPaymentTime allows to avoid iterating through blocks to find the time
+        This exchanges memory for CPU operations
+
+        As prevCycleLastTime can be invalid, prevCycleLastPaymentHash allows to check its validity as the block time
+        and prevCycleLastTime should be similar
+    */
+    int64_t prevCycleLastPaymentTime;
+    uint256 prevCycleLastPaymentHash;
 	
     CMasternode();
     CMasternode(const CMasternode& other);
@@ -177,6 +187,7 @@ public:
         swap(first.nLastScanningErrorBlockHeight, second.nLastScanningErrorBlockHeight);
         swap(first.wins, second.wins);
         swap(first.prevCycleLastPaymentTime, second.prevCycleLastPaymentTime);
+        swap(first.prevCycleLastPaymentHash, second.prevCycleLastPaymentHash);        
     }
 
     CMasternode& operator=(CMasternode from)
@@ -198,6 +209,7 @@ public:
     // adds a win to a masternode
     void addWin(int blockHeight);
 	
+    bool cycleDataValid();
 	
     ADD_SERIALIZE_METHODS;
 
@@ -255,6 +267,7 @@ public:
         lastPing = CMasternodePing();
         wins = 0;
         prevCycleLastPaymentTime = GetAdjustedTime();
+        prevCycleLastPaymentHash = chainActive.Tip()->GetBlockHash();
     }
 
     bool IsEnabled()

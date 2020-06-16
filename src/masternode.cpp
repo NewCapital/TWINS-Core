@@ -97,6 +97,7 @@ CMasternode::CMasternode()
     lastTimeChecked = 0;
     wins = 0;
     prevCycleLastPaymentTime = GetAdjustedTime();
+    prevCycleLastPaymentHash = chainActive.Tip()->GetBlockHash();
 }
 
 CMasternode::CMasternode(const CMasternode& other)
@@ -126,6 +127,7 @@ CMasternode::CMasternode(const CMasternode& other)
     {
         prevCycleLastPaymentTime = other.prevCycleLastPaymentTime;
     }
+    prevCycleLastPaymentHash = other.prevCycleLastPaymentHash;
 }
 
 CMasternode::CMasternode(const CMasternodeBroadcast& mnb)
@@ -150,6 +152,7 @@ CMasternode::CMasternode(const CMasternodeBroadcast& mnb)
     nLastScanningErrorBlockHeight = 0;
     lastTimeChecked = 0;
     prevCycleLastPaymentTime = GetAdjustedTime();
+    prevCycleLastPaymentHash = chainActive.Tip()->GetBlockHash();
 }
 
 //
@@ -182,6 +185,7 @@ void CMasternode::addWin(int blockHeight)
     {
         wins = wins - tier;
         prevCycleLastPaymentTime = GetAdjustedTime();
+        prevCycleLastPaymentHash = chainActive.Tip()->GetBlockHash();
     }
 }
 
@@ -263,6 +267,21 @@ void CMasternode::Check(bool forceCheck)
     }
 
     activeState = MASTERNODE_ENABLED; // OK
+}
+
+/*
+    If the difference between the last reward block time and the prevCycleLastPaymentTime
+    is bigger than 10 minutes, then the data is invalid
+*/
+bool CMasternode::cycleDataValid()
+{
+    CBlock block;
+    CBlockIndex* pblockindex = mapBlockIndex[prevCycleLastPaymentHash];
+    if (!ReadBlockFromDisk(block, pblockindex))
+        return false;
+    if (abs(block.GetBlockTime() - prevCycleLastPaymentTime) > 600)
+        return false;
+    return true;
 }
 
 int64_t CMasternode::SecondsSincePayment()
