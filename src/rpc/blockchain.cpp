@@ -18,11 +18,69 @@
 #include "accumulatormap.h"
 #include "accumulators.h"
 #include "ui_interface.h"
+#include "masternode-payments.h"
+#include "masternodeman.h"
 
 #include <stdint.h>
 #include <univalue.h>
 
 using namespace std;
+
+struct ratioCalculator
+{
+    public:
+        std::string address;
+        int rewards;
+        int tier;
+        int64_t active;
+        int64_t timeframe;
+        
+        ratioCalculator()
+        {
+
+        }
+
+        ratioCalculator(std::string address, int tier, int64_t active)
+        {
+            this->address = address;
+            this->rewards = 1;
+            this->tier = tier;
+            this->active = active;
+            this->timeframe = active;
+        }
+
+        void addReward()
+        {
+            this->rewards++;
+        }
+
+        double getRewardRate()
+        {
+            return (double) rewards / (double) timeframe * (double) 86400
+                / (double) tier;
+        }
+
+        // Formatted in days, hours and minutes
+        string getActiveString()
+        {
+            int minutes = this->active % 3600 / 60;
+            int hours = this->active % 86400 / 3600;
+            int days = this->active / 86400;
+            string timeActive = std::to_string(days) + (string)" Days, " + std::to_string(hours)
+                + (string)(" Hours, ") + std::to_string(minutes) + (string)(" Minutes");
+            return timeActive;
+        }
+
+        string getTimeframeString()
+        {
+            int minutes = this->timeframe % 3600 / 60;
+            int hours = this->timeframe % 86400 / 3600;
+            int days = this->timeframe / 86400;
+            string time = std::to_string(days) + (string)" Days, " + std::to_string(hours)
+                + (string)(" Hours, ") + std::to_string(minutes) + (string)(" Minutes");
+            return time;
+        }
+    };
 
 extern void TxToJSON(const CTransaction& tx, const uint256 hashBlock, UniValue& entry);
 void ScriptPubKeyToJSON(const CScript& scriptPubKey, UniValue& out, bool fIncludeHex);
@@ -129,6 +187,19 @@ UniValue blockToJSON(const CBlock& block, const CBlockIndex* blockindex, bool tx
     ztwinsObj.push_back(Pair("total", ValueFromAmount(blockindex->GetZerocoinSupply())));
     result.push_back(Pair("zTWINSsupply", ztwinsObj));
 
+    return result;
+}
+
+UniValue rewardRateToJson(string address, int tier, int wins, std::string active,
+    std::string timeframe, double rate)
+{
+    UniValue result(UniValue::VOBJ);
+    result.push_back(Pair("Address", address));
+    result.push_back(Pair("Tier", tier));
+    result.push_back(Pair("Rewards", wins));
+    result.push_back(Pair("Active", active));
+    result.push_back(Pair("Timeframe", timeframe));
+    result.push_back(Pair("RewardRate", rate));
     return result;
 }
 
@@ -295,6 +366,140 @@ UniValue getblockhash(const UniValue& params, bool fHelp)
     CBlockIndex* pblockindex = chainActive[nHeight];
     return pblockindex->GetBlockHash().GetHex();
 }
+
+#include <fstream>
+
+UniValue getRewardRatios(const UniValue& params, bool fHelp)
+{
+    if (fHelp || params.size() > 1)
+        throw runtime_error(
+            "getRewardRatios [number of blocks] \n"
+            "\nReturns reward ratios of each masternode "
+            "(how many rewards has been received per million locked in a single day).\n"
+
+            "\nArguments:\n"
+            "1. number of blocks         (numeric) The number of blocks that ratios are calculated for. "
+            "If not provided, the ratios will be calculated for as many blocks, as there are "
+            "millions locked."
+
+            "\nResult:\n"
+            "\"Address\"         (string) The masternode address\n"
+            "\"Tier\"         (numeric) The masternode tier (millions locked)\n"
+            "\"Rewards\"         (numeric) The amount of rewards received by the masternode\n"
+            "\"Active\"         (numeric) Amount of time a masternode has been active for\n"
+            "\"Timeframe\"         (string) Time frame for which data is given\n"
+            "\"RewardRate\"         (numeric) The masternode reward rate\n"
+
+            "\nExamples:\n" +
+            HelpExampleCli("getRewardRatios", "") + HelpExampleRpc("getRewardRatios", "1000"));
+
+
+    LOCK(cs_main);
+    int blocks = mnodeman.CountMillionsLocked() * 2;
+    std::map<std::string, ratioCalculator> rewards;
+    CMasternode* mn;
+    CTxDestination address;
+    CBlock block;
+    CBlockIndex* pindex = chainActive.Tip();
+    int64_t time = GetAdjustedTime();
+    int index = 0;
+
+    // time passed since the block, with the smallest index value, which is included
+    // in the calculation of the reward ratios
+    int64_t timeSinceLastBlock = 0;
+    UniValue result(UniValue::VOBJ);
+
+    if (!ReadBlockFromDisk(block, pindex))
+    {
+        return UniValue("There was an error with reading data from the disk");
+    }
+    if (params.size() > 0)
+    {
+        blocks = atoi(params[0].get_str());
+    }
+    for (int i = 0; i < blocks; i++)
+    {
+        for (index = 0; index < (block.vtx[1].vout.size()); index++)
+        {
+            string x = std::to_string(block.vtx[1].vout[index].nValue);
+            if (x == "1217656000000")
+                break;
+        }
+        ExtractDestination(block.vtx[1].vout[index].scriptPubKey, address);
+        std::string addressString = CBitcoinAddress(address).ToString();
+        std::string uniqueAddress = block.vtx[1].vout[index].scriptPubKey.ToString();
+        if (!rewards.count(uniqueAddress))
+        {
+            mn = mnodeman.Find(address);
+            if (!mn)
+            {
+                pindex = pindex->pprev;
+                if (!ReadBlockFromDisk(block, pindex))
+                {
+                    return UniValue("There was an error with reading data from the disk");
+                }
+                index = 0;
+                continue;
+            }
+            int64_t active = (int64_t)(mn->lastPing.sigTime - mn->sigTime);
+
+            // Count rewards received only after a masternode was started last time
+            if (active < time - block.nTime)
+            {
+                pindex = pindex->pprev;
+                if (!ReadBlockFromDisk(block, pindex))
+                {
+                    return UniValue("There was an error with reading data from the disk");
+                }
+                index = 0;
+                continue;
+            }
+            ratioCalculator newMn = ratioCalculator(addressString, GetMasternodeTierRounds(mn->vin), active);
+            rewards.insert(pair <std::string, ratioCalculator> (uniqueAddress, newMn));
+        }
+        else
+        {
+            // Count rewards received only after a masternode was started last time
+            if (rewards[uniqueAddress].active < time - block.nTime)
+            {
+                pindex = pindex->pprev;
+                if (!ReadBlockFromDisk(block, pindex))
+                {
+                    return UniValue("There was an error with reading data from the disk");
+                }
+                index = 0;
+                continue;
+            }
+            rewards[uniqueAddress].addReward();
+        }
+        timeSinceLastBlock = (int64_t)time - (int64_t)block.nTime;
+        pindex = pindex->pprev;
+        if (!ReadBlockFromDisk(block, pindex))
+        {
+            return UniValue("There was an error with reading data from the disk");
+        }
+        index = 0;
+    }
+
+    int i = 0;
+    std::map<std::string, ratioCalculator>::iterator it = rewards.begin();
+    while (it != rewards.end())
+    {
+        i++;
+        // Timeframe is the maximum of the time since the last block included in the calculations and
+        // the masternode active time
+        if (it->second.timeframe > timeSinceLastBlock)
+        {
+            it->second.timeframe = timeSinceLastBlock;
+        }
+        result.push_back(Pair(std::to_string(i), rewardRateToJson(it->second.address, it->second.tier, it->second.rewards, 
+            it->second.getActiveString(), it->second.getTimeframeString(), it->second.getRewardRate())));
+        it++;
+    }
+
+    return result;
+}
+
 
 UniValue getblock(const UniValue& params, bool fHelp)
 {
