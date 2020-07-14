@@ -125,6 +125,10 @@ public:
     CMasternode* Find(const CTxIn& vin);
     CMasternode* Find(const CPubKey& pubKeyMasternode);
     CMasternode* Find(const CTxDestination& address);
+    std::list <CMasternode*> Find1(const CTxDestination& address);
+    std::list <CMasternode*> Find1(std::string address);
+
+    void getMasternodeTierCounts(int tiers[], int64_t activeAtLeast = 0);
 
     /// Find an entry in the masternode list that is next to be paid
     CMasternode* GetNextMasternodeInQueueForPayment(int nBlockHeight, bool fFilterSigTime, int& nCount);

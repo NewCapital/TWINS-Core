@@ -4672,16 +4672,41 @@ bool ProcessNewBlock(CValidationState& state, CNode* pfrom, CBlock* pblock, CDis
             pwalletMain->AutoCombineDust();
     }
 
-    CMasternode* masternode;
+    std::list<CMasternode*> mn;
     CTxDestination address;
 	if (pblock->vtx.size() > 1)
 	{
 		CScript scriptPubKey = pblock->vtx[1].vout[pblock->vtx[1].vout.size() - 2].scriptPubKey;
 		if (!ExtractDestination(scriptPubKey, address))
 			LogPrintf("Failed to extract winning masternode address");
-		masternode = mnodeman.Find(address);
-		if (masternode)
-			masternode->addWin(GetHeight());
+
+        mn = mnodeman.Find1(address);
+        std::list<CMasternode*>::iterator it = mn.begin();
+
+        mn = mnodeman.Find1("WT2S8JwKKzgCLAJ96X3cgvsSzUF9JePW4b");
+
+        if (mn.size() == 1 && *(mn.begin()) != nullptr)
+            (*(mn.begin()))->addWin(GetHeight());
+
+        else if (mn.size() > 1)
+        {
+            std::list<CMasternode*>::iterator it = mn.begin();
+            CMasternode* bestMasternode;
+            int64_t longestSinceLastCycle = -1;
+            while (it != mn.end())
+            {
+                if (longestSinceLastCycle < (*(it))->SecondsSincePayment())
+                {
+                    longestSinceLastCycle = (*(it))->SecondsSincePayment();
+                    bestMasternode = (*(it));
+                }
+                it++;
+            }
+            if (bestMasternode != nullptr)
+            {
+                bestMasternode->addWin(GetHeight());
+            }
+        }
 	}
 
     LogPrintf("%s : ACCEPTED Block %ld in %ld milliseconds with size=%d\n", __func__, GetHeight(), GetTimeMillis() - nStartTime,

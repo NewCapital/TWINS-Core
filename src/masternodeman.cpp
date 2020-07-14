@@ -514,6 +514,61 @@ CMasternode* CMasternodeMan::Find(const CTxDestination& address)
     return NULL;
 }
 
+std::list <CMasternode*> CMasternodeMan::Find1(const CTxDestination& address)
+{
+    LOCK(cs);
+    list <CMasternode*> masternodes;
+    BOOST_FOREACH (CMasternode& mn, vMasternodes) {
+        if (CBitcoinAddress(mn.pubKeyCollateralAddress.GetID()).ToString() == CBitcoinAddress(address).ToString())
+        {
+            masternodes.push_back(&mn);
+        }
+    }
+    return masternodes;
+}
+
+std::list <CMasternode*> CMasternodeMan::Find1(const string address)
+{
+    LOCK(cs);
+    list <CMasternode*> masternodes;
+    BOOST_FOREACH (CMasternode& mn, vMasternodes) {
+        if (CBitcoinAddress(mn.pubKeyCollateralAddress.GetID()).ToString() == address)
+        {
+            masternodes.push_back(&mn);
+        }
+    }
+    return masternodes;
+}
+
+void CMasternodeMan::getMasternodeTierCounts(int tiers[], int64_t activeAtLeast)
+{
+    int millionslockedBefore;
+    int64_t active;
+    BOOST_FOREACH (CMasternode& mn, vMasternodes) {
+        millionslockedBefore = CountMillionsLockedLaunch(-1, mn.sigTime);
+        active = (int64_t)(mn.lastPing.sigTime - mn.sigTime);
+        if (activeAtLeast > active)
+            continue;
+        switch (GetMasternodeTierRounds(mn.vin))
+        {
+            case 1:
+                tiers[0]++;
+                break;
+            case 5:
+                tiers[1]++;
+                break;
+            case 20:
+                tiers[2]++;
+                break;
+            case 100:
+                tiers[3]++;
+                break;
+            default:
+                tiers[0]++;
+        }
+    }
+}
+
 //
 // Deterministically select the oldest/best masternode to pay on the network
 //
