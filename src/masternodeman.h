@@ -125,8 +125,7 @@ public:
     CMasternode* Find(const CTxIn& vin);
     CMasternode* Find(const CPubKey& pubKeyMasternode);
     CMasternode* Find(const CTxDestination& address);
-    std::list <CMasternode*> Find1(const CTxDestination& address);
-    std::list <CMasternode*> Find1(std::string address);
+    std::list <CMasternode*> FindList(const CTxDestination& address);
 
     void getMasternodeTierCounts(int tiers[], int64_t activeAtLeast = 0);
 

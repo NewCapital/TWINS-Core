@@ -4680,10 +4680,8 @@ bool ProcessNewBlock(CValidationState& state, CNode* pfrom, CBlock* pblock, CDis
 		if (!ExtractDestination(scriptPubKey, address))
 			LogPrintf("Failed to extract winning masternode address");
 
-        mn = mnodeman.Find1(address);
+        mn = mnodeman.FindList(address);
         std::list<CMasternode*>::iterator it = mn.begin();
-
-        mn = mnodeman.Find1("WT2S8JwKKzgCLAJ96X3cgvsSzUF9JePW4b");
 
         if (mn.size() == 1 && *(mn.begin()) != nullptr)
             (*(mn.begin()))->addWin(GetHeight());

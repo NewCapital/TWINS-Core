@@ -514,25 +514,12 @@ CMasternode* CMasternodeMan::Find(const CTxDestination& address)
     return NULL;
 }
 
-std::list <CMasternode*> CMasternodeMan::Find1(const CTxDestination& address)
+std::list <CMasternode*> CMasternodeMan::FindList(const CTxDestination& address)
 {
     LOCK(cs);
     list <CMasternode*> masternodes;
     BOOST_FOREACH (CMasternode& mn, vMasternodes) {
         if (CBitcoinAddress(mn.pubKeyCollateralAddress.GetID()).ToString() == CBitcoinAddress(address).ToString())
-        {
-            masternodes.push_back(&mn);
-        }
-    }
-    return masternodes;
-}
-
-std::list <CMasternode*> CMasternodeMan::Find1(const string address)
-{
-    LOCK(cs);
-    list <CMasternode*> masternodes;
-    BOOST_FOREACH (CMasternode& mn, vMasternodes) {
-        if (CBitcoinAddress(mn.pubKeyCollateralAddress.GetID()).ToString() == address)
         {
             masternodes.push_back(&mn);
         }

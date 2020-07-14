@@ -40,15 +40,6 @@ struct ratioCalculator
 
         }
 
-        /*ratioCalculator(std::string address, int tier, int64_t active)
-        {
-            this->address = address;
-            this->rewards = 1;
-            this->tier = tier;
-            this->active = active;
-            this->timeframe = active;
-        }*/
-
         ratioCalculator(std::string address, int tier, int64_t active, int rewards)
         {
             this->address = address;
@@ -386,7 +377,7 @@ UniValue getRewardRates(const UniValue& params, bool fHelp)
 {
     if (fHelp || params.size() == 0 || params.size() > 2)
         throw runtime_error(
-            "getRewardRatios [show average ratios? (0/1)] [number of blocks]\n"
+            "getRewardRates [show average ratios? (0/1)] [number of blocks]\n"
             "\nReturns reward ratios of each masternode "
             "(how many rewards has been received per million locked in a single day).\n"
 
@@ -406,7 +397,7 @@ UniValue getRewardRates(const UniValue& params, bool fHelp)
             "\"RewardRate\"         (numeric) The masternode reward rate\n"
 
             "\nExamples:\n" +
-            HelpExampleCli("getRewardRatios", "") + HelpExampleRpc("getRewardRatios", "1000"));
+            HelpExampleCli("getRewardRates", "0") + HelpExampleRpc("getRewardRates", "1"));
 
 
     LOCK(cs_main);
@@ -450,7 +441,7 @@ UniValue getRewardRates(const UniValue& params, bool fHelp)
         std::string addressString = CBitcoinAddress(address).ToString();
         if (rewards.count(addressString) == 0)
         {
-            mn = mnodeman.Find1(address);
+            mn = mnodeman.FindList(address);
             if (mn.size() == 1)
             {
                 int64_t active = (int64_t)((*(mn.begin()))->lastPing.sigTime - (*(mn.begin()))->sigTime);
