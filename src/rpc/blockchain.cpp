@@ -18,11 +18,75 @@
 #include "accumulatormap.h"
 #include "accumulators.h"
 #include "ui_interface.h"
+#include "masternode-payments.h"
+#include "masternodeman.h"
 
 #include <stdint.h>
 #include <univalue.h>
 
 using namespace std;
+
+struct ratioCalculator
+{
+    public:
+        std::string address;
+        int rewards;
+        int tier;
+        int64_t active;
+        int64_t timeframe;
+        
+        ratioCalculator()
+        {
+
+        }
+
+        ratioCalculator(std::string address, int tier, int64_t active, int rewards)
+        {
+            this->address = address;
+            this->rewards = rewards;
+            this->tier = tier;
+            this->active = active;
+            this->timeframe = active;
+        }
+
+        void addReward()
+        {
+            this->rewards++;
+        }
+
+        double getRewardRate()
+        {
+            return (double) rewards / (double) timeframe * (double) 86400
+                / (double) tier;
+        }
+
+        double getPotentialRate()
+        {
+            return (double) (rewards + 1) / (double) timeframe * (double) 86400
+                / (double) tier;
+        }
+
+        // Formatted in days, hours and minutes
+        string getActiveString()
+        {
+            int minutes = this->active % 3600 / 60;
+            int hours = this->active % 86400 / 3600;
+            int days = this->active / 86400;
+            string timeActive = std::to_string(days) + (string)" Days, " + std::to_string(hours)
+                + (string)(" Hours, ") + std::to_string(minutes) + (string)(" Minutes");
+            return timeActive;
+        }
+
+        string getTimeframeString()
+        {
+            int minutes = this->timeframe % 3600 / 60;
+            int hours = this->timeframe % 86400 / 3600;
+            int days = this->timeframe / 86400;
+            string time = std::to_string(days) + (string)" Days, " + std::to_string(hours)
+                + (string)(" Hours, ") + std::to_string(minutes) + (string)(" Minutes");
+            return time;
+        }
+    };
 
 extern void TxToJSON(const CTransaction& tx, const uint256 hashBlock, UniValue& entry);
 void ScriptPubKeyToJSON(const CScript& scriptPubKey, UniValue& out, bool fIncludeHex);
@@ -129,6 +193,19 @@ UniValue blockToJSON(const CBlock& block, const CBlockIndex* blockindex, bool tx
     ztwinsObj.push_back(Pair("total", ValueFromAmount(blockindex->GetZerocoinSupply())));
     result.push_back(Pair("zTWINSsupply", ztwinsObj));
 
+    return result;
+}
+
+UniValue rewardRateToJson(string address, int tier, int wins, std::string active,
+    std::string timeframe, double rate)
+{
+    UniValue result(UniValue::VOBJ);
+    result.push_back(Pair("Address", address));
+    result.push_back(Pair("Tier", tier));
+    result.push_back(Pair("Rewards", wins));
+    result.push_back(Pair("Active", active));
+    result.push_back(Pair("Timeframe", timeframe));
+    result.push_back(Pair("RewardRate", rate));
     return result;
 }
 
@@ -295,6 +372,197 @@ UniValue getblockhash(const UniValue& params, bool fHelp)
     CBlockIndex* pblockindex = chainActive[nHeight];
     return pblockindex->GetBlockHash().GetHex();
 }
+
+UniValue getRewardRates(const UniValue& params, bool fHelp)
+{
+    if (fHelp || params.size() == 0 || params.size() > 2)
+        throw runtime_error(
+            "getRewardRates [show average ratios? (0/1)] [number of blocks]\n"
+            "\nReturns reward ratios of each masternode "
+            "(how many rewards has been received per million locked in a single day).\n"
+
+            "\nArguments:\n"
+            "1. show average?         (boolean) 1 - shows average reward rates for each tier. 2 -"
+            " shows reward rates for individual masternodes."
+            "2. number of blocks         (numeric) The number of blocks that ratios are calculated for. "
+            "If not provided, the ratios will be calculated for as many blocks, as there are "
+            "millions locked * 2 (approximately 2 cycles)."
+
+            "\nResult:\n"
+            "\"Address\"         (string) The masternode address\n"
+            "\"Tier\"         (numeric) The masternode tier (millions locked)\n"
+            "\"Rewards\"         (numeric) The amount of rewards received by the masternode\n"
+            "\"Active\"         (numeric) Amount of time a masternode has been active for\n"
+            "\"Timeframe\"         (string) Time frame for which data is given\n"
+            "\"RewardRate\"         (numeric) The masternode reward rate\n"
+
+            "\nExamples:\n" +
+            HelpExampleCli("getRewardRates", "0") + HelpExampleRpc("getRewardRates", "1"));
+
+
+    LOCK(cs_main);
+    int blocks = mnodeman.CountMillionsLocked() * 2;
+    std::map<std::string, ratioCalculator> rewards;
+    std::list<CMasternode*> mn;
+    CTxDestination address;
+    CBlock block;
+    CBlockIndex* pindex = chainActive.Tip();
+    int64_t time = GetAdjustedTime();
+    int index = 0;
+    int tierInfo[4] = {0};
+    bool showAverage = false;
+
+    // time passed since the block, with the smallest index value, which is included
+    // in the calculation of the reward ratios
+    int64_t timeSinceLastBlock = 0;
+    UniValue result(UniValue::VOBJ);
+
+    if (!ReadBlockFromDisk(block, pindex))
+    {
+        return UniValue("There was an error with reading data from the disk");
+    }
+    if (params.size() > 0)
+    {
+        showAverage = (params[0].get_str() == "1");
+        if (params.size() > 1)
+        {
+            blocks = atoi(params[1].get_str());
+        }
+    }
+    for (int i = 0; i < blocks; i++)
+    {
+        for (index = 0; index < (block.vtx[1].vout.size()); index++)
+        {
+            string x = std::to_string(block.vtx[1].vout[index].nValue);
+            if (x == "1217656000000")
+                break;
+        }
+        ExtractDestination(block.vtx[1].vout[index].scriptPubKey, address);
+        std::string addressString = CBitcoinAddress(address).ToString();
+        if (rewards.count(addressString) == 0)
+        {
+            mn = mnodeman.FindList(address);
+            if (mn.size() == 1)
+            {
+                int64_t active = (int64_t)((*(mn.begin()))->lastPing.sigTime - (*(mn.begin()))->sigTime);
+                if (active > time - block.nTime)
+                {
+                    ratioCalculator newMn = ratioCalculator(addressString, GetMasternodeTierRounds((*(mn.begin()))->vin), active, 1);
+                    rewards.insert(pair <std::string, ratioCalculator> (addressString, newMn));
+                }
+            }
+            else if (mn.size() > 1)
+            {
+                std::list<CMasternode*>::iterator it = mn.begin();
+                std::string bestMasternode;
+                double smallestRatio = -1;
+                while (it != mn.end())
+                {
+                    std::string individualAddress = addressString + std::to_string((*it)->sigTime);
+                    int64_t active = (int64_t)((*it)->lastPing.sigTime - (*it)->sigTime);
+
+                    if (active <= time - block.nTime)
+                        continue;
+
+                    if (rewards.count(individualAddress))
+                    {
+                        if (rewards[individualAddress].active > time - block.nTime)
+                        {
+                            if (smallestRatio > rewards[individualAddress].getPotentialRate() || smallestRatio == -1)
+                            {
+                                smallestRatio = rewards[individualAddress].getPotentialRate();
+                                bestMasternode = individualAddress;
+                            }
+                        }
+                        it++;
+                        continue;
+                    }
+
+                    // Count rewards received only after a masternode was started last time
+                    if (active < time - block.nTime)
+                    {
+                        it++;
+                        continue;
+                    }
+                    ratioCalculator newMn = ratioCalculator(addressString, GetMasternodeTierRounds((*it)->vin), active, 0);
+                    rewards.insert(pair <std::string, ratioCalculator> (individualAddress, newMn));
+                    if (smallestRatio > rewards[individualAddress].getPotentialRate() || smallestRatio == -1)
+                    {
+                        smallestRatio = rewards[individualAddress].getPotentialRate();
+                        bestMasternode = individualAddress;
+                    }
+                    it++;
+                }
+                rewards[bestMasternode].addReward();
+            }
+        }
+        else
+        {
+            // Count rewards received only after a masternode was started last time
+            if (rewards[addressString].active >= time - block.nTime)
+                rewards[addressString].addReward();
+        }
+        timeSinceLastBlock = (int64_t)time - (int64_t)block.nTime;
+        pindex = pindex->pprev;
+        if (!ReadBlockFromDisk(block, pindex))
+        {
+            return UniValue("There was an error with reading data from the disk");
+        }
+        index = 0;
+    }
+
+    int i = 0;
+    std::map<std::string, ratioCalculator>::iterator it = rewards.begin();
+    double ratios[4] = {0};
+    
+    while (it != rewards.end())
+    {
+        i++;
+        // Timeframe is the maximum of the time since the last block included in the calculations and
+        // the masternode active time
+        if (it->second.timeframe > timeSinceLastBlock)
+        {
+            it->second.timeframe = timeSinceLastBlock;
+        }
+        if (!showAverage)
+            result.push_back(Pair(std::to_string(i), rewardRateToJson(it->second.address, it->second.tier, it->second.rewards, 
+                it->second.getActiveString(), it->second.getTimeframeString(), it->second.getRewardRate())));
+        
+        // If a masternode hasn't collected its tier number of wins, it is 
+        if (it->second.rewards > it->second.tier)
+        {
+            switch (it->second.tier)
+            {
+                case 1:
+                    ratios[0] += it->second.getRewardRate();
+                    break;
+                case 5:
+                    ratios[1] += it->second.getRewardRate();
+                    break;
+                case 20:
+                    ratios[2] += it->second.getRewardRate();
+                    break;
+                case 100:
+                    ratios[3] += it->second.getRewardRate();
+            }
+        }
+        it++;
+    }
+    mnodeman.getMasternodeTierCounts(tierInfo, blocks);
+    for (int i = 0; i < 4; i++)
+    {
+        ratios[i] = ratios[i] / (double) tierInfo[i];
+    }
+    if (showAverage)
+    {
+        result.push_back(Pair("Tier-1 ratio average", std::to_string(ratios[0])));
+        result.push_back(Pair("Tier-5 ratio average", std::to_string(ratios[1])));
+        result.push_back(Pair("Tier-20 ratio average", std::to_string(ratios[2])));
+        result.push_back(Pair("Tier-100 ratio average", std::to_string(ratios[3])));
+    }
+    return result;
+}
+
 
 UniValue getblock(const UniValue& params, bool fHelp)
 {
