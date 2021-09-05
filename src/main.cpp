@@ -1881,19 +1881,59 @@ int64_t GetBlockValue(int nHeight)
 {
     int64_t nSubsidy = 0;
 
+    // // First block with initial pre-mine
+    // if (nHeight == 1) {
+    //     nSubsidy = 6000000 * COIN;
+    //
+    // // Release 15220.70 Twins as a reward for each block
+    // // until max supply of 100 000 000 000 TWINS will
+    // // be mathematically reachet at block 659605.
+    // } else if (nHeight < 6569605)  {
+    //     nSubsidy = 15220.70 * COIN;
+    //
+    // } else {
+    //     nSubsidy = 0;
+    // }
+
     // First block with initial pre-mine
     if (nHeight == 1) {
         nSubsidy = 6000000 * COIN;
 
     // Release 15220.70 Twins as a reward for each block
-    // until max supply of 100 000 000 000 TWINS will
-    // be mathematically reachet at block 659605.
-    } else if (nHeight < 6569605)  {
+    // until block 711111 (approximatelly 15.10.2021)
+    } else if (nHeight < 711111)  {
         nSubsidy = 15220.70 * COIN;
 
-    } else {
-        nSubsidy = 0;
-    }
+      // Phasing out inflation...
+      } else if (nHeight < 716666)  {
+        nSubsidy = 8000 * COIN;
+      } else if (nHeight < 722222)  {
+        nSubsidy = 4000 * COIN;
+      } else if (nHeight < 727777)  {
+        nSubsidy = 2000 * COIN;
+      } else if (nHeight < 733333)  {
+        nSubsidy = 1000 * COIN;
+      } else if (nHeight < 738888)  {
+        nSubsidy = 500 * COIN;
+      } else if (nHeight < 744444)  {
+        nSubsidy = 250 * COIN;
+      } else if (nHeight < 750000)  {
+        nSubsidy = 125 * COIN;
+      } else if (nHeight < 755555)  {
+        nSubsidy = 60 * COIN;
+      } else if (nHeight < 761111)  {
+        nSubsidy = 30 * COIN;
+      } else if (nHeight < 766666)  {
+        nSubsidy = 15 * COIN;
+      } else if (nHeight < 772222)  {
+        nSubsidy = 8 * COIN;
+      } else if (nHeight < 777777)  {
+        nSubsidy = 4 * COIN;
+      } else if (nHeight < 6569605)  {
+        nSubsidy = 2 * COIN;
+      } else {
+          nSubsidy = 0;
+      }
 
     return nSubsidy;
 }
