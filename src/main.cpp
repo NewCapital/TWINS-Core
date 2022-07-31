@@ -5034,6 +5034,7 @@ bool CVerifyDB::VerifyDB(CCoinsView* coinsview, int nCheckLevel, int nCheckDepth
     if (pindexFailure)
         return error("VerifyDB() : *** coin database inconsistencies found (last %i blocks, %i good transactions before that)\n", chainActive.Height() - pindexFailure->nHeight + 1, nGoodTransactions);
 
+    CBlockIndex* invalidBlock = NULL;
     // check level 4: try reconnecting blocks
     if (nCheckLevel >= 4) {
         CBlockIndex* pindex = pindexState;
@@ -5046,8 +5047,18 @@ bool CVerifyDB::VerifyDB(CCoinsView* coinsview, int nCheckLevel, int nCheckDepth
                 return error("VerifyDB() : *** ReadBlockFromDisk failed at %d, hash=%s", pindex->nHeight, pindex->GetBlockHash().ToString());
             if (!ConnectBlock(block, state, pindex, coins, false))
                 return error("VerifyDB() : *** found unconnectable block at %d, hash=%s", pindex->nHeight, pindex->GetBlockHash().ToString());
+            if ((invalidBlock == NULL) && !Checkpoints::CheckBlock(pindex->nHeight, pindex->GetBlockHash())) {
+                // return  error("VerifyDB() : *** Checkpoint/Blacklist check fail at %d, hash=%s",pindex->nHeight, pindex->GetBlockHash().ToString());
+                LogPrintf("VerifyDB() : *** Checkpoint/Blacklist check fail at %d, hash=%s\n",pindex->nHeight, pindex->GetBlockHash().ToString());
+                invalidBlock = pindex;
+                // break;
+            }
         }
     }
+
+    // Invalidate blacklisted block (if found)
+    CValidationState inv_state;
+    if (invalidBlock != NULL) InvalidateBlock(inv_state, invalidBlock);
 
     // Validate & Enforce last checkpoint
 

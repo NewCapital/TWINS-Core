@@ -123,28 +123,45 @@ static Checkpoints::MapCheckpoints mapCheckpoints =
     (550000, uint256("c6f21271fbdaec10dfee16d9cf4c4d073d78b1282d1aa4414001a4ec5fc05008"))
     (650000, uint256("8942cf0b3850d448289ebe663e074c122bf0d36361bf6dd374aeeffa2b9c340b"))
     (682400, uint256("89708f4d054771b2079854b415fb8d336d9f16c9b5cd1342d3b233229a35c97c")) // preparing update for 70926
+    (907970, uint256("3d9698bc000068035cebe5ed382ae5bb660b8debe271dffed70f914de22bc9aa"))
+    (907998, uint256("91ee7fb080b75f37cd96223134d52cccb9fdc19f2698c65a4343356a1421e0b0"))
     // (, uint256(""))
+    ;
+//
+// Blacklist
+//
+static Checkpoints::MapCheckpoints BadBlocks =
+    boost::assign::map_list_of
+    (907999, uint256("75759383da8f63daa3980f5b1767287a204124c317083780d457ebd6d15d4639")) // 29.7 - 908000
+    (908000, uint256("3a1daa15d6ab64d79d4f71e40dfde714fd5f0d181b12a4123d9e555b216fe358"))
     ;
 static const Checkpoints::CCheckpointData data = {
     &mapCheckpoints,
-    1630876592, // * UNIX timestamp of last checkpoint block
-    1762402,          // * total number of transactions between genesis and last checkpoint
+    &BadBlocks,
+    1659113123, // * UNIX timestamp of last checkpoint block
+    2236602,          // * total number of transactions between genesis and last checkpoint
                 //   (the tx=... number in the SetBestChain debug.log lines)
     0           // * estimated number of transactions per day after checkpoint
 };
 
 static Checkpoints::MapCheckpoints mapCheckpointsTestnet =
     boost::assign::map_list_of(0, uint256("0x001"));
+static Checkpoints::MapCheckpoints BadBlocksTestnet =
+    boost::assign::map_list_of(0, uint256("0x001"));
 static const Checkpoints::CCheckpointData dataTestnet = {
     &mapCheckpointsTestnet,
+    &BadBlocksTestnet,
     1740710,
     0,
     250};
 
 static Checkpoints::MapCheckpoints mapCheckpointsRegtest =
     boost::assign::map_list_of(0, uint256("0x001"));
+static Checkpoints::MapCheckpoints BadBlocksRegtest =
+    boost::assign::map_list_of(0, uint256("0x001"));
 static const Checkpoints::CCheckpointData dataRegtest = {
     &mapCheckpointsRegtest,
+    &BadBlocksRegtest,
     1454124731,
     0,
     100};

@@ -33,6 +33,11 @@ bool CheckBlock(int nHeight, const uint256& hash, bool fMatchesCheckpoint)
     if (!fEnabled)
         return true;
 
+    // Check if the block is Blacklisted
+    const MapCheckpoints& badblocks = *Params().Checkpoints().BadBlocks;
+    MapCheckpoints::const_iterator y = badblocks.find(nHeight);
+    if (y != badblocks.end()) return !(hash == y->second);
+
     const MapCheckpoints& checkpoints = *Params().Checkpoints().mapCheckpoints;
 
     MapCheckpoints::const_iterator i = checkpoints.find(nHeight);
