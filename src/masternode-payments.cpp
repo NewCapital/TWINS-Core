@@ -312,7 +312,15 @@ void CMasternodePayments::FillBlockPayee(CMutableTransaction& txNew, int64_t nFe
 
     CAmount blockValue = GetBlockValue(pindexPrev->nHeight + 1);
     CAmount masternodePayment = GetMasternodePayment(pindexPrev->nHeight + 1, blockValue, 0, fZTWINSStake);
+    CTxDestination dev_destination = CBitcoinAddress(Params().DevAddress()).Get();
+    CScript devScript = GetScriptForDestination(dev_destination);
 
+    // fallback when no MNs currently available
+    if (!hasPayment) {
+        LogPrint("masternode","FillBlockPayee: No masternode to pay, using dev address\n");
+        payee = devScript;
+        hasPayment = true;
+    }
     if (hasPayment) {
         if (fProofOfStake) {
             /**For Proof Of Stake vout[0] must be null
