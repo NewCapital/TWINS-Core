@@ -4317,15 +4317,16 @@ bool AcceptBlock(CBlock& block, CValidationState& state, CBlockIndex** ppindex, 
         uint256 hashProofOfStake = 0;
         unique_ptr<CStakeInput> stake;
 
-        if (!CheckProofOfStake(block, hashProofOfStake, stake))
-            return state.DoS(100, error("%s: proof of stake check failed", __func__));
+        if (pindexPrev->nHeight < 907995 || pindexPrev->nHeight > 908006) {
+          if (!CheckProofOfStake(block, hashProofOfStake, stake))
+              return state.DoS(100, error("%s: proof of stake check failed", __func__));
 
-        if (!stake)
-            return error("%s: null stake ptr", __func__);
+          if (!stake)
+              return error("%s: null stake ptr", __func__);
 
-        if (stake->IsZTWINS() && !ContextualCheckZerocoinStake(pindexPrev->nHeight, stake.get()))
-            return state.DoS(100, error("%s: staked zTWINS fails context checks", __func__));
-
+          if (stake->IsZTWINS() && !ContextualCheckZerocoinStake(pindexPrev->nHeight, stake.get()))
+              return state.DoS(100, error("%s: staked zTWINS fails context checks", __func__));
+        }
         uint256 hash = block.GetHash();
         if(!mapProofOfStake.count(hash)) // add to mapProofOfStake
             mapProofOfStake.insert(make_pair(hash, hashProofOfStake));
