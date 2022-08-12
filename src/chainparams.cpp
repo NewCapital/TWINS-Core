@@ -128,10 +128,17 @@ static Checkpoints::MapCheckpoints mapCheckpoints =
     (907996, uint256("4faaf1b056965328980ae1b6caeca7428698f916110e473e39c161543d32a767"))
     (907997, uint256("a99b449ac84f53f3a9c7aba594654b2a7f803f94b25b0f835337e160e8e93f3a"))
     (907998, uint256("1b629d939db0c4f71e42d206b59ea0f2c0f1019c8b5f46b66241e9ea25e8854a"))
+    (907999, uint256("3714adc51af727462177131098c5ed6f46489350eeab716c8f96b744afdc88d0"))
     (908000, uint256("f9f9d700a25f1b8a98ed53829278180a75da9781bde525a0cc90a1ef9b2fa8fc"))
+    (908001, uint256("58dfee65f4fe0d7d97e5618c10c5cb68ee50e9a210189ab8e1aa0dae659087a8"))
+    (908002, uint256("a43c4301f66e211818915d2692a6455addbc19e299590cd13d78c061764094e0"))
+    (908003, uint256("6a13fffd1d02ad616682ed92ec72076bdfab0453fc9aa6624a846640daa539d3"))
+    (908004, uint256("cacf903e1d9c05a182d7dd480ffb9349e9d9de1242f5740c453194aec19f5b88"))
+    (908005, uint256("033d4929561bf239b1d8c32a702690f1fae903ef4031ae6f320159ba8b52b5fe"))
     (908006, uint256("1e8900e8a6872310af5d7171a2252a390846c4bc5e73c8ad35f7e2ff35f460f9"))
     (908007, uint256("7933e12ba1321b30385f37254fa40d62cf064fd60766c65cfc97179770125720"))
     (908614, uint256("e94ff6dd468d909e14d447762bb52051e41ea0bf91b10d48869fd093cdb540df")) // Network recovery & fork. 08.2022 (end)
+    (909389, uint256("bd5a38aa452c21e6c6039cd464fe60366bbed8964735088391ee0c6cca68bd02"))
     // (, uint256(""))
     ;
 //
@@ -146,8 +153,8 @@ static Checkpoints::MapCheckpoints BadBlocks =
 static const Checkpoints::CCheckpointData data = {
     &mapCheckpoints,
     &BadBlocks,
-    1660213777, // * UNIX timestamp of last checkpoint block
-    2237835,          // * total number of transactions between genesis and last checkpoint
+    1660309215, // * UNIX timestamp of last checkpoint block
+    2239385,          // * total number of transactions between genesis and last checkpoint
                 //   (the tx=... number in the SetBestChain debug.log lines)
     0           // * estimated number of transactions per day after checkpoint
 };
